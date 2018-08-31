@@ -5,9 +5,12 @@
 #include <XmlRpc.h>
 #include <boost/array.hpp>
 #include <bitset>
+#include <typeinfo>
+#include <typeindex>
 
 namespace rosparam_utilities
 {
+  bool check( const XmlRpc::XmlRpcValue& node, const std::vector< std::string >& required_fields );
   
   void fromXmlRpcValue ( const XmlRpc::XmlRpcValue& node, unsigned int&      val );
   void fromXmlRpcValue ( const XmlRpc::XmlRpcValue& node, double&            val );
@@ -16,13 +19,6 @@ namespace rosparam_utilities
   void fromXmlRpcValue ( const XmlRpc::XmlRpcValue& node, bool&              val );
   void fromXmlRpcValue ( const XmlRpc::XmlRpcValue& node, std::string&       val );
   
-  void toXmlRpcValue   ( const double&      t,  XmlRpc::XmlRpcValue& xml_value );
-  void toXmlRpcValue   ( const int&         t,  XmlRpc::XmlRpcValue& xml_value, std::string format ="dec"  );
-  void toXmlRpcValue   ( const std::string& t,  XmlRpc::XmlRpcValue& xml_value );
-  void toXmlRpcValue   ( const bool&        t,  XmlRpc::XmlRpcValue& xml_value );
-  
-  
-  bool check( const XmlRpc::XmlRpcValue& node, const std::vector< std::string >& required_fields );
   
   template <typename T> T fromXmlRpcValue(  const XmlRpc::XmlRpcValue& node, const std::string& field="", const std::string& log_key ="" )
   {
@@ -70,44 +66,13 @@ namespace rosparam_utilities
   inline bool                 toBool      ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<bool>        ( node, field, log ); }
   inline std::string          toString    ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<std::string> ( node, field, log ); }
   
-  
   template< class T> 
-  inline bool getParam( const XmlRpc::XmlRpcValue& node,  T& ret, const std::string& log_key = "" )
+  inline bool getParam( const XmlRpc::XmlRpcValue& node,  std::string key,  T& ret, const std::string& log_key = "" )
   {
     XmlRpc::XmlRpcValue config( node );
     try 
     {
-      ret = fromXmlRpcValue< T >( config );
-    }
-    catch( std::exception& e )
-    {
-      ROS_ERROR ( "The node '%s' is corrupted", log_key.c_str() );
-      return false;
-    }
-    return true;
-  }
-  template< class T> 
-  inline void extractParam( const XmlRpc::XmlRpcValue& node, const std::string& key,  T& ret, const std::string& log_key = "" )
-  {
-    XmlRpc::XmlRpcValue config( node );
-    try 
-    {
-      ret = fromXmlRpcValue< T >( config, key );
-    }
-    catch( std::exception& e )
-    {
-      ROS_ERROR ( "The node '%s' is corrupted. %s", log_key.c_str(), e.what() );
-      throw std::runtime_error("The node '" + log_key + "' is corrupted. "+ std::string( e.what() ) );
-    }
-  }
-  
-  template< class T> 
-  inline bool getParam( const XmlRpc::XmlRpcValue& node,  std::string key,  T& ret )
-  {
-    XmlRpc::XmlRpcValue config( node );
-    try 
-    {
-      ret = fromXmlRpcValue< T >( config, key );
+      ret = fromXmlRpcValue< T >( config, key, log_key );
     }
     catch( std::exception& e )
     {
@@ -117,7 +82,62 @@ namespace rosparam_utilities
     return true;
   }
   
-
+  template< class T> 
+  inline bool getParam( const XmlRpc::XmlRpcValue& node,  T& ret, const std::string& log_key = "" )
+  {
+    return getParam( node, "", ret, log_key) ;
+  }
+  
+  template<typename T>
+  inline bool getParam(const ros::NodeHandle& nh, const std::string& key, T& ret, const std::string& log_key = "" )
+  {
+	XmlRpc::XmlRpcValue config;
+    if ( !nh.getParam(key,config) )
+    {
+      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
+      return false;
+	}
+	return getParam(config,ret,log_key);
+  }
+  
+  
+  
+  template< class T> 
+  inline void extractParam( const XmlRpc::XmlRpcValue& node, const std::string& key,  T& ret )
+  {
+    XmlRpc::XmlRpcValue config( node );
+    try 
+    {
+      ret = fromXmlRpcValue< T >( config, key );
+    }
+    catch( std::exception& e )
+    {
+      ROS_ERROR ( "The node '%s' is corrupted. %s", key.c_str(), e.what() );
+      throw std::runtime_error("The node '" + key + "' is corrupted. "+ std::string( e.what() ) );
+    }
+  }
+  
+  template<typename T>
+  inline void extractParam(const ros::NodeHandle& nh, const std::string& key, T& ret )
+  {
+	XmlRpc::XmlRpcValue config;
+    if( !nh.getParam(key,config) )
+    {
+      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
+      throw std::runtime_error("The parameter '" + key + "' has been not found. " );
+	}
+    return extractParam( config, key, ret );
+  }
+  
+  template<>
+  inline void extractParam<XmlRpc::XmlRpcValue>(const ros::NodeHandle& nh, const std::string& key, XmlRpc::XmlRpcValue& ret)
+  {
+    if( !nh.getParam(key,ret) )
+    {
+      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
+      throw std::runtime_error("The parameter '" + key + "' has been not found. " );
+	}
+  } 
   
   
   
@@ -168,18 +188,16 @@ namespace rosparam_utilities
     return true;
   }
   
-  template< class T, size_t n > 
-  inline bool getParamArray ( const XmlRpc::XmlRpcValue& node,  boost::array< T, n >& ret, const std::string& log_key = "" )
+  template< class T> 
+  inline bool getParamVector ( const ros::NodeHandle& nh, const std::string& key,  std::vector< T >& ret )
   {
-    std::vector< T > v;
-    if(!getParamVector ( node, v,  log_key ) )
+    XmlRpc::XmlRpcValue config;
+    if(!nh.getParam(key,config))
+	{
+      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
       return false;
-    if( v.size() != n )
-      return false;
-    
-    for( size_t i=0; i<n; i++ )
-      ret[i] = v[i];
-    return true;
+	}
+    return getParamVector<T>(config,ret, key);
   }
   
   template< class T> 
@@ -204,6 +222,22 @@ namespace rosparam_utilities
     return true;
   }
   
+  
+  
+  template< class T, size_t n > 
+  inline bool getParamArray ( const XmlRpc::XmlRpcValue& node,  boost::array< T, n >& ret, const std::string& log_key = "" )
+  {
+    std::vector< T > v;
+    if(!getParamVector ( node, v,  log_key ) )
+      return false;
+    if( v.size() != n )
+      return false;
+    
+    for( size_t i=0; i<n; i++ )
+      ret[i] = v[i];
+    return true;
+  }
+  
   template< class T, size_t n > 
   inline bool getParamArray ( const XmlRpc::XmlRpcValue& node,  const std::string& key, boost::array< T, n >& ret  )
   {
@@ -217,6 +251,24 @@ namespace rosparam_utilities
       ret[i] = v[i];
     return true;
   }
+  
+  template< class T, size_t n > 
+  inline bool getParamArray ( ros::NodeHandle& nh, const std::string& key,  boost::array< T, n >& ret )
+  {
+    std::vector< T > v;
+    if(!getParamVector ( nh, key,  v ) )
+      return false;
+    if( v.size() != n )
+      return false;
+    
+    for( size_t i=0; i<n; i++ )
+      ret[i] = v[i];
+    return true;
+  }
+  
+  
+  
+  
   
   template< class T >
   inline bool getParamMatrix ( const XmlRpc::XmlRpcValue& node, std::vector< std::vector< T > >& ret, const std::string& log_key = "" )
@@ -305,19 +357,6 @@ namespace rosparam_utilities
     return true;
   }
   
-  
-  
-  template<typename T>
-  bool getParam(const ros::NodeHandle& nh, const std::string& key, T& ret)
-  {
-    bool res=nh.getParam(key,ret);
-    if (!res)
-      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
-    
-    ROS_DEBUG_STREAM("Parameter '" << key << "' loaded!");
-    return res;
-  }
-  
   template< class T >
   inline bool getParamMatrix ( const ros::NodeHandle& nh,  const std::string& key, std::vector< std::vector< T > >& ret )
   {
@@ -325,6 +364,27 @@ namespace rosparam_utilities
     nh.getParam(key,config);
     return getParamMatrix(config,ret, key);
   }
+  
+ /**
+   * 
+   * 
+   * 
+   * 
+   * 
+   * SET PARAM 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   * 
+   */
+  void toXmlRpcValue   ( const double&      t,  XmlRpc::XmlRpcValue& xml_value );
+  void toXmlRpcValue   ( const int&         t,  XmlRpc::XmlRpcValue& xml_value, std::string format ="dec"  );
+  void toXmlRpcValue   ( const std::string& t,  XmlRpc::XmlRpcValue& xml_value );
+  void toXmlRpcValue   ( const bool&        t,  XmlRpc::XmlRpcValue& xml_value );
   
   
   template< class T >
@@ -345,6 +405,51 @@ namespace rosparam_utilities
     nh.setParam( key, data_ );
     return true;
   }
+  
+  template< class T >
+  inline bool setParamNum ( ros::NodeHandle& nh,  const std::string& key, const std::vector< std::vector< T > >& mtx, unsigned int precision = 0 )
+  {
+    const std::vector< std::type_index > allowed_type = { std::type_index(typeid(double)), 
+                                                          std::type_index(typeid(long double)), 
+                                                          std::type_index(typeid(float)) };
+    bool ok = false;
+    
+    for( auto typ : allowed_type )
+      if ( std::type_index(typeid( T )) == typ )
+        ok = true;
+    
+    if( ok )
+    {
+      XmlRpc::XmlRpcValue data_;
+      int iRow = 0;
+      for ( auto itRow=mtx.begin(); itRow!=mtx.end(); itRow++ )
+      {
+        int iEl = 0;
+        XmlRpc::XmlRpcValue row_;
+
+        for ( auto itCol=(*itRow).begin(); itCol!=(*itRow).end(); itCol++ )
+        {
+          if ( precision != 0 )
+            row_[iEl++] = ( lround( (long double)( *itCol ) * pow( 10, precision ) ) ) / pow( 10, precision );
+          else
+            row_[iEl++] = *itCol;
+        }
+        
+        data_[iRow++] = row_;
+      }
+
+      nh.setParam(key, data_ );
+      return true;
+    }
+    else
+    {
+      ROS_ERROR("Unable to detect type id in setParamNum");
+      return false;
+    }
+    
+  }
+  
+
   
 };
 
