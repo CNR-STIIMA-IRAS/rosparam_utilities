@@ -18,8 +18,7 @@ namespace rosparam_utilities
   void fromXmlRpcValue ( const XmlRpc::XmlRpcValue& node, long unsigned int& val );
   void fromXmlRpcValue ( const XmlRpc::XmlRpcValue& node, bool&              val );
   void fromXmlRpcValue ( const XmlRpc::XmlRpcValue& node, std::string&       val );
-  
-  
+    
   template <typename T> T fromXmlRpcValue(  const XmlRpc::XmlRpcValue& node, const std::string& field="", const std::string& log_key ="" )
   {
     T ret;
@@ -61,10 +60,10 @@ namespace rosparam_utilities
     return ret;
   }
   
-  inline double               toDouble    ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<double>      ( node, field, log ); }
-  inline int                  toInt       ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<int>         ( node, field, log ); }
-  inline bool                 toBool      ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<bool>        ( node, field, log ); }
-  inline std::string          toString    ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<std::string> ( node, field, log ); }
+  inline double       toDouble    ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<double>      ( node, field, log ); }
+  inline int          toInt       ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<int>         ( node, field, log ); }
+  inline bool         toBool      ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<bool>        ( node, field, log ); }
+  inline std::string  toString    ( const XmlRpc::XmlRpcValue& node, const std::string& field ="", const std::string& log ="" ) { return fromXmlRpcValue<std::string> ( node, field, log ); }
   
   template< class T> 
   inline bool getParam( const XmlRpc::XmlRpcValue& node,  std::string key,  T& ret, const std::string& log_key = "" )
@@ -126,7 +125,7 @@ namespace rosparam_utilities
       ROS_WARN_STREAM("Parameter '" << key << "' not found!");
       throw std::runtime_error("The parameter '" + key + "' has been not found. " );
 	}
-    return extractParam( config, key, ret );
+    return extractParam( config, "", ret );
   }
   
   template<>
