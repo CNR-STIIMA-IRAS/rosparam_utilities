@@ -93,7 +93,7 @@ namespace rosparam_utilities
 	XmlRpc::XmlRpcValue config;
     if ( !nh.getParam(key,config) )
     {
-      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
+      ROS_WARN_STREAM("Parameter '" << nh.getNamespace() << "/" << key << "' not found!");
       return false;
 	}
 	return getParam(config,ret,log_key);
@@ -122,8 +122,8 @@ namespace rosparam_utilities
 	XmlRpc::XmlRpcValue config;
     if( !nh.getParam(key,config) )
     {
-      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
-      throw std::runtime_error("The parameter '" + key + "' has been not found. " );
+      ROS_WARN_STREAM("Parameter '" << nh.getNamespace() << "/" << key << "' not found!");
+      throw std::runtime_error("The parameter '" + key + "' has been not found" );
 	}
     return extractParam( config, "", ret );
   }
@@ -133,8 +133,8 @@ namespace rosparam_utilities
   {
     if( !nh.getParam(key,ret) )
     {
-      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
-      throw std::runtime_error("The parameter '" + key + "' has been not found. " );
+      ROS_WARN_STREAM("Parameter '" << nh.getNamespace() << "/" << key << "' not found!");
+      throw std::runtime_error("The parameter '" + key + "' has been not found" );
 	}
   } 
   
@@ -193,7 +193,7 @@ namespace rosparam_utilities
     XmlRpc::XmlRpcValue config;
     if(!nh.getParam(key,config))
 	{
-      ROS_WARN_STREAM("Parameter '" << key << "' not found!");
+      ROS_WARN_STREAM("Parameter '" << nh.getNamespace() << "/" << key << "' not found!");
       return false;
 	}
     return getParamVector<T>(config,ret, key);
