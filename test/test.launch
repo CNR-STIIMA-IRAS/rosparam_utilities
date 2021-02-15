@@ -1,0 +1,64 @@
+<launch>
+
+<arg name="valgrind" default="false" />
+<arg name="debug" default="false" />
+
+<group ns="ns_exist" >
+<rosparam>
+  struct:
+    int_i: 1
+    int_i2: 1.0
+    double_d: 2.0
+    double_d2: 2
+    string_s: ciao
+    vector_string: [ ciao, ciao, ciao]
+    vector_int: [1, 2, 3, 4.4444]
+    vector_double: [1.01, 2.002, 3.0003, 4.00004]
+    matrix_int:
+    - [11.0, 12.0]
+    - [21.0, 22.0]
+    matrix_double:
+    - [11.0, 12.0]
+    - [21.0, 22]
+    matrix_string:
+    - [ciao, bau]
+    - [aaaa, 1234]
+</rosparam>
+</group>
+
+<rosparam>
+  int_i: 1
+  int_i2: 1.0
+  double_d: 2.0
+  double_d2: 2
+  string_s: ciao
+  vector_string: [ ciao, ciao, ciao]
+  vector_int: [1, 0.0, 1, 0.0234]
+  vector_double: [1.0, 1, 2, 3.4]
+  matrix_int:
+  - [11.0, 12.0]
+  - [21.0, 22.0]
+  matrix_double:
+  - [11.0, 12.0]
+  - [21.0, 22]
+  matrix_string:
+  - [ciao, bau]
+  - [aaaa, 1234]
+</rosparam>
+
+<group if="$(arg valgrind)">
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix"
+      value="valgrind -v --track-origins=yes --tool=memcheck --leak-check=full --show-reachable=yes  --num-callers=20 --track-fds=yes  --log-file=/home/feymann/a.txt" />
+  <test launch-prefix="$(arg launch_prefix)" test-name="test" pkg="rosparam_utilities" type="rosparam_utilities_test" />
+</group>
+
+<group unless="$(arg valgrind)">
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+  <test launch-prefix="$(arg launch_prefix)" test-name="test" pkg="rosparam_utilities" type="rosparam_utilities_test" />
+</group>
+
+
+
+</launch>
