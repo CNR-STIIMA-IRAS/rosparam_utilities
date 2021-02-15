@@ -17,8 +17,8 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rosparam_utilities
-  CATKIN_DEPENDS roscpp 
-  DEPENDS 
+  CATKIN_DEPENDS roscpp
+  DEPENDS
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)

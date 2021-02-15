@@ -910,13 +910,13 @@ bool getParam(const ros::NodeHandle& nh, const std::string& key, T& ret, std::st
 template<typename T>
 inline void extractParam(const ros::NodeHandle& nh, const std::string& key, T& ret)
 {
-XmlRpc::XmlRpcValue config;
+  XmlRpc::XmlRpcValue config;
   if(!nh.getParam(key,config))
   {
     ROS_WARN_STREAM("Parameter '" <<nh.getNamespace() <<"/" <<key <<"' not found!");
     throw std::runtime_error("The parameter '" + key + "' has been not found");
   }
-  return extractParam(config, "", ret);
+  return fromXmlRpcValue(config, ret);
 }
 
 template<>
