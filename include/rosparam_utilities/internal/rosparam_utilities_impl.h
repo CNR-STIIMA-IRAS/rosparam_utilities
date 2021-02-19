@@ -3,13 +3,8 @@
 #ifndef ROSPARAM_UTILITIES__ROSPARAM_UTILITIES_IMPL_H
 #define ROSPARAM_UTILITIES__ROSPARAM_UTILITIES_IMPL_H
 
-#include <ros/ros.h>
-#include <XmlRpc.h>
-#include <boost/array.hpp>
-#include <bitset>
-#include <typeinfo>
-#include <typeindex>
 
+#include <type_traits>
 #include <rosparam_utilities/rosparam_utilities.h>
 
 namespace utils
@@ -17,9 +12,9 @@ namespace utils
 
   //Using const & and const_cast to modify value ... weird syntax of eigen
   template<typename Derived, typename OtherDerived,
-           std::enable_if_t< (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic)
+           typename std::enable_if< (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic)
                           || (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic)
-                          , int> = 0>
+                          , int>::type = 0>
   inline bool resize(Eigen::MatrixBase<Derived> const & m1, const Eigen::MatrixBase<Derived>& m2)
   {
     Eigen::MatrixBase<Derived>& mat = const_cast< Eigen::MatrixBase<Derived>& >(m1);
@@ -40,9 +35,9 @@ namespace utils
   }
 
   template<typename Derived, typename OtherDerived,
-           std::enable_if_t< (Eigen::MatrixBase<Derived>::RowsAtCompileTime != Eigen::Dynamic)
+           typename std::enable_if< (Eigen::MatrixBase<Derived>::RowsAtCompileTime != Eigen::Dynamic)
                           && (Eigen::MatrixBase<Derived>::ColsAtCompileTime != Eigen::Dynamic)
-                          , int> = 0>
+                          , int>::type = 0>
   inline bool resize(Eigen::MatrixBase<Derived> const & m1, const Eigen::MatrixBase<Derived>& m2)
   {
     return (m1.rows() == m2.rows()) && (m1.cols() == m2.cols());
@@ -980,6 +975,25 @@ inline bool setParam(ros::NodeHandle& nh, const std::string& key, const std::vec
   }
 
   nh.setParam(key, data_);
+  return true;
+}
+
+template< class T >
+inline bool setParam(ros::NodeHandle& nh,  const std::string& key, const std::vector<Eigen::VectorXd>& vector )
+{
+  XmlRpc::XmlRpcValue data;
+  int iCol = 0;
+  for ( auto itCol=vector.begin(); itCol!=vector.end(); itCol++ )
+  {
+  int iEl = 0;
+  XmlRpc::XmlRpcValue col;
+  for (auto iRow=0; iRow<(*itCol).size(); iRow++)
+  col[iEl++] = (*itCol)[iRow];
+
+  data[iCol++] = (XmlRpc::XmlRpcValue)col;
+  }
+
+  nh.setParam( key, data );
   return true;
 }
 
