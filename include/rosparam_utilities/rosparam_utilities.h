@@ -394,6 +394,25 @@ namespace rosparam_utilities
   }
 
   template< class T >
+  inline bool setParam( const ros::NodeHandle& nh,  const std::string& key, const std::vector<Eigen::VectorXd>& vector )
+  {
+    XmlRpc::XmlRpcValue data;
+    int iCol = 0;
+    for ( auto itCol=vector.begin(); itCol!=vector.end(); itCol++ )
+    {
+      int iEl = 0;
+      XmlRpc::XmlRpcValue col;
+      for (auto iRow=0; iRow<(*itCol).size(); iRow++)
+        col[iEl++] = (*itCol)[iRow];
+      
+      data[iCol++] = (XmlRpc::XmlRpcValue)col;
+    }
+
+    nh.setParam( key, data );
+    return true;
+  }
+
+  template< class T >
   inline bool setParamNum ( ros::NodeHandle& nh,  const std::string& key, const std::vector< std::vector< T > >& mtx, unsigned int precision = 0 )
   {
     const std::vector< std::type_index > allowed_type = { std::type_index(typeid(double)),
