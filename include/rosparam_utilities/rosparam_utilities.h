@@ -39,7 +39,6 @@ bool getParamMatrix(const ros::NodeHandle& nh, const std::string& key, std::vect
 template<class T>
 bool setParam(ros::NodeHandle& nh, const std::string& key, const std::vector< std::vector<T> >& mtx);
 
-template< class T >
 bool setParam( ros::NodeHandle& nh,  const std::string& key, const std::vector<Eigen::VectorXd>& vector );
 
 template<class T>

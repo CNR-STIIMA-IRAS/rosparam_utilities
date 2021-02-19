@@ -978,7 +978,6 @@ inline bool setParam(ros::NodeHandle& nh, const std::string& key, const std::vec
   return true;
 }
 
-template< class T >
 inline bool setParam(ros::NodeHandle& nh,  const std::string& key, const std::vector<Eigen::VectorXd>& vector )
 {
   XmlRpc::XmlRpcValue data;
