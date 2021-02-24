@@ -7,7 +7,7 @@
 #include <bitset>
 #include <typeinfo>
 #include <typeindex>
-#include <eigen3/Eigen/Core>
+#include <Eigen/Core>
 
 namespace rosparam_utilities
 {

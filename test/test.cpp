@@ -270,6 +270,8 @@ TEST(TestSuite, getParamMethods)
   EXPECT_FALSE(rosparam_utilities::getParam(nh, "matrix_double", vectorxd, what));
   std::cout << __LINE__ <<":vectorxd:" << vectorxd.transpose() <<" what:" << what  << std::endl;
 
+  // To be added test for rosparam_utilities::setParam
+
 }
 
 
