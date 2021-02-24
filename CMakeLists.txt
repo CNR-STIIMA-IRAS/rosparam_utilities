@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp )
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include ${EIGEN3_INCLUDE_DIRS}
   LIBRARIES rosparam_utilities
   CATKIN_DEPENDS roscpp
   DEPENDS
