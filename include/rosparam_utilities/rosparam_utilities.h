@@ -152,7 +152,7 @@ bool getParamMatrix(const XmlRpc::XmlRpcValue& node, const std::string& key, std
 
 
 void toXmlRpcValue (const double& t, XmlRpc::XmlRpcValue& xml_value);
-void toXmlRpcValue (const int& t, XmlRpc::XmlRpcValue& xml_value, std::string format ="dec" );
+void toXmlRpcValue (const int& t, XmlRpc::XmlRpcValue& xml_value, const std::string& format ="dec" );
 void toXmlRpcValue (const std::string& t, XmlRpc::XmlRpcValue& xml_value);
 void toXmlRpcValue (const bool& t, XmlRpc::XmlRpcValue& xml_value);
 

@@ -24,7 +24,7 @@ std::string toString(const XmlRpc::XmlRpcValue& node, const std::string& field, 
   
 
 
-void toXmlRpcValue( const int& t,  XmlRpc::XmlRpcValue& xml_value, std::string format )
+void toXmlRpcValue( const int& t,  XmlRpc::XmlRpcValue& xml_value, const std::string& format )
 {
   if( format == "dec" )
   {
