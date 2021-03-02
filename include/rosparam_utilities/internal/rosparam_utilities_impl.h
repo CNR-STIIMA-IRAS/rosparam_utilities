@@ -91,9 +91,7 @@ inline std::string to_string(const std::vector<std::vector<T>>& vv)
 
 //=============================================================================================
 template <typename T>
-inline T fromXmlRpcValue(const XmlRpc::XmlRpcValue& node,
-                         const std::string& key,
-                         const std::string& log)
+inline T fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, const std::string& key,const std::string& log)
 {
   T ret;
   bool ok = true;
@@ -408,7 +406,6 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::string& val)
   }
 }
 
-//!
 template<typename T>
 inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<T>& val)
 {
@@ -492,7 +489,6 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::array<T,n>& va
   }
 }
 
-//!
 template<typename T>
 inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<std::vector<T>>& vv)
 {
@@ -521,7 +517,6 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<std::ve
     }
   }
 }
-
 
 template<typename Derived>
 inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<Derived> const & val)
@@ -652,23 +647,6 @@ inline bool getParam(const XmlRpc::XmlRpcValue& node,  T& ret, const std::string
 {
   return getParam(node, "", ret, log_key) ;
 }
-
-
-//template<class T>
-//inline void extractParam(const XmlRpc::XmlRpcValue& node, const std::string& key,  T& ret)
-//{
-//  XmlRpc::XmlRpcValue config(node);
-//  try
-//  {
-//    ret = fromXmlRpcValue<T>(config, key);
-//  }
-//  catch(std::exception& e)
-//  {
-//    ROS_ERROR("The node '%s' is corrupted. %s", key.c_str(), e.what());
-//    throw std::runtime_error("The node '" + key + "' is corrupted. "+ std::string(e.what()));
-//  }
-//}
-
 
 template<class T>
 inline bool getParamVector(const XmlRpc::XmlRpcValue& node,  std::vector<T>& ret, const std::string& log_key)
@@ -853,11 +831,8 @@ inline bool getParamMatrix(const XmlRpc::XmlRpcValue& node,  const std::string& 
   return true;
 }
 
-
-
 template<typename T>
-inline
-bool getParam(const ros::NodeHandle& nh, const std::string& key, T& ret, std::string& what, const T* default_val)
+inline bool getParam(const ros::NodeHandle& nh, const std::string& key, T& ret, std::string& what, const T* default_val)
 {
   if(!nh.hasParam(key))
   {
@@ -949,7 +924,6 @@ inline bool getParamArray(ros::NodeHandle& nh, const std::string& key,  boost::a
     ret[i] = v[i];
   return true;
 }
-
 
 template<class T>
 inline bool getParamMatrix(const ros::NodeHandle& nh,  const std::string& key, std::vector<std::vector<T>>& ret)
