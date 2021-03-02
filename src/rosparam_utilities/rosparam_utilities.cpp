@@ -60,7 +60,7 @@ void toXmlRpcValue( const double& t,  XmlRpc::XmlRpcValue& xml_value )
 
 bool check( const XmlRpc::XmlRpcValue& config, const std::vector< std::string >& required_fields )
 {
-  for( std::vector< std::string >::const_iterator it = required_fields.begin(); it != required_fields.end(); it++ )
+  for( std::vector< std::string >::const_iterator it = required_fields.begin(); it != required_fields.end(); ++it )
   {
     if( !config.hasMember( *it ) )
     {
