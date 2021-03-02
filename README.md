@@ -5,7 +5,6 @@
 [![Codacy Badge][y]][3]
 [![FOSSA Status][f]][4]
 
-
 ## License ##
 [![FOSSA Status][o]][5]
 
