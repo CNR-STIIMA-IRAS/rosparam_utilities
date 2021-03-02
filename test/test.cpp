@@ -171,20 +171,20 @@ TEST(TestSuite, getParamMethods)
 {
   ros::NodeHandle nh("/ns_exist/struct");
 
-  std::vector<std::string> required_fields =
-  {
-    "int_i",
-    "int_i2",
-    "double_d",
-    "double_d2",
-    "string_s",
-    "vector_string",
-    "vector_int",
-    "vector_double",
-    "matrix_int",
-    "matrix_double",
-    "matrix_string"
-  };
+//  std::vector<std::string> required_fields =
+//  {
+//    "int_i",
+//    "int_i2",
+//    "double_d",
+//    "double_d2",
+//    "string_s",
+//    "vector_string",
+//    "vector_int",
+//    "vector_double",
+//    "matrix_int",
+//    "matrix_double",
+//    "matrix_string"
+//  };
 
 
   int int_i = 0;
