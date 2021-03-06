@@ -412,7 +412,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<T>& val
   XmlRpc::XmlRpcValue config(node);
   if(config.getType() != XmlRpc::XmlRpcValue::TypeArray)
   {
-    throw std::runtime_error("Type inconsistency (expected type a vector, param not a vector)");
+    throw std::runtime_error("Type inconsistency (expected a vector<>, while param is not an array)");
   }
 
   val.clear();
@@ -495,7 +495,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<std::ve
   XmlRpc::XmlRpcValue config(node);
   if(config.getType() != XmlRpc::XmlRpcValue::TypeArray)
   {
-    throw std::runtime_error("Type inconsistency (expected type a vector, param not a vector)");
+    throw std::runtime_error("Type inconsistency (expected a vector<vector<>>, while param is not an array)");
   }
 
   vv.clear();
@@ -524,7 +524,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<D
   XmlRpc::XmlRpcValue config(node);
   if(config.getType() != XmlRpc::XmlRpcValue::TypeArray)
   {
-    throw std::runtime_error("Type inconsistency (expected type a vector, while the param is not a vector)");
+    throw std::runtime_error("Type inconsistency (expected a Eigen::Matrix<>, while the param is not an array)");
   }
 
   try
