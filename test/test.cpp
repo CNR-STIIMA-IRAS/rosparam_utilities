@@ -70,6 +70,44 @@ Eigen::MatrixXd matrixxd;
 Eigen::Matrix<double, 10, 10> matrix1010;
 Eigen::Matrix<double, 2, 2>   matrix22;
 
+// same numbers/data that should be in the yaml/launch
+const int d_int_i= 1;
+const int d_int_i2= 1.0;
+const double d_double_d= 2.0;
+const double d_double_d2= 2;
+const std::string d_string_s = "ciao";
+const std::vector<std::string> d_vector_string{"ciao", "ciao", "ciao"};
+const std::vector<int> d_vector_int{1, 2, 3, 4};
+const std::vector<double> d_vector_double{1.01, 2.002, 3.0003, 4.00004};
+const std::vector<std::vector<int>> d_matrix_int{{11, 12}, {21, 22}};
+const std::vector<std::vector<double>> d_matrix_double{{11.0, 12.0},{21.0, 22}};
+const std::vector<std::vector<std::string>> d_matrix_string{{"ciao", "bau"},{"aaaa", "1234"}};
+
+Eigen::VectorXd d_vectorxd = Eigen::Map<const Eigen::VectorXd>(&d_vector_double[0],4);
+Eigen::Matrix<double, 4, 1> d_vector4 = Eigen::Map<const Eigen::Matrix<double, 4, 1>>(&d_vector_double[0]);
+
+Eigen::MatrixXd d_matrixxd(2,2);
+Eigen::Matrix<double, 2, 2> d_matrix22;
+
+template<typename T>
+bool equal(const std::vector<T>& lhs, const std::vector<T>& rhs)
+{
+  if(lhs.size()!=rhs.size())
+    return false;
+  for(size_t i=0;i<lhs.size();i++)
+  {
+    if(lhs.at(i)!=rhs.at(i))
+      return false;
+  }
+  return true;
+}
+
+template<typename Mat>
+bool equal(const Mat& lhs, const Mat& rhs)
+{
+  return (lhs-rhs).cwiseAbs().maxCoeff()<1e-6;
+}
+
 // Declare a test
 TEST(TestSuite, rawMethods)
 {
@@ -90,6 +128,9 @@ TEST(TestSuite, rawMethods)
     "matrix_string"
   };
 
+  d_matrixxd << 11.0, 12.0, 21.0, 22;
+  d_matrix22 << 11.0, 12.0, 21.0, 22;
+
   vector10.setZero();
   vector4.setZero();
   matrix1010.setZero();
@@ -101,45 +142,44 @@ TEST(TestSuite, rawMethods)
   EXPECT_TRUE(ru::check(node, required_fields));
 
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i"         ], int_i));
-  COUT << ":int_i:" << int_i << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i2"        ], int_i2));
-  COUT << ":int_i2:" << int_i2 << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["double_d"      ], double_d));
-  COUT << ":int_d:" << double_d << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["double_d2"     ], double_d2));
-  COUT << ":int_d2:" << double_d2 << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["string_s"      ], string_s));
-  COUT << ":string_s:" << string_s << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_string" ], vector_string));
-  COUT << ":vector_string:" << ru::to_string(vector_string) << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_int"    ], vector_int));
-  COUT << ":vector_int:" << ru::to_string(vector_int) << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_double" ], vector_double));
-  COUT << ":vector_double:" << ru::to_string(vector_double) << std::endl;
 
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_int"    ], matrix_int));
-  COUT << ":matrix_int:" << ru::to_string(matrix_int) << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_double" ], matrix_double));
-  COUT << ":matrix_double:" << ru::to_string(matrix_double) << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_string" ], matrix_string));
-  COUT << ":matrix_string:" << ru::to_string(matrix_string) << std::endl;
 
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_double" ], vectorxd));
-  COUT << ":vectorxd:" << vectorxd.transpose() << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_double" ], vector4));
-  COUT << ":vector4:" << vector4.transpose() << std::endl;
   EXPECT_ANY_THROW(ru::fromXmlRpcValue(node["vector_double" ], vector10));
-  COUT << ":vector100:" << vector10.transpose() << std::endl;
 
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_double" ], matrixxd));
-  COUT << ":matrixxd:" << matrixxd << std::endl;
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_double" ], matrix22));
-  COUT << ":matrix22:" << matrix22 << std::endl;
   EXPECT_ANY_THROW(ru::fromXmlRpcValue(node["matrix_double" ], matrix1010));
-  COUT << ":matrix1010:" << matrix1010 << std::endl;
-
   EXPECT_ANY_THROW(ru::fromXmlRpcValue(node["matrix_double" ], vectorxd));
-  COUT << ":vectorxd:" << vectorxd.transpose() << std::endl;
+
+  EXPECT_TRUE(d_int_i           == int_i     );
+  EXPECT_TRUE(d_int_i2          == int_i2    );
+  EXPECT_TRUE(d_double_d        == double_d  );
+  EXPECT_TRUE(d_double_d2       == double_d2 );
+  EXPECT_TRUE(d_string_s        == string_s  );
+  EXPECT_TRUE(equal(d_vector_string   , vector_string   ));
+  EXPECT_TRUE(equal(d_vector_int      , vector_int      ));
+  EXPECT_TRUE(equal(d_vector_double   , vector_double   ));
+  EXPECT_TRUE(equal(d_matrix_int      , matrix_int      ));
+  EXPECT_TRUE(equal(d_matrix_double   , matrix_double   ));
+  EXPECT_TRUE(equal(d_matrix_string   , matrix_string   ));
+
+  EXPECT_TRUE(equal(d_vectorxd   , vectorxd   ));
+  EXPECT_TRUE(equal(d_vector4    , vector4    ));
+
+  EXPECT_TRUE(equal(d_matrixxd   , matrixxd   ));
+  EXPECT_TRUE(equal(d_matrix22   , matrix22   ));
 }
 
 // Declare a test
@@ -246,43 +286,18 @@ TEST(TestSuite, getParamMethods)
 
   std::string what;
   EXPECT_TRUE(ru::getParam(nh, "int_i", int_i, what));
-  COUT << ":int_i:" << int_i << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "int_i2", int_i2, what));
-  COUT << ":int_i2:" << int_i2 << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "double_d", double_d, what));
-  COUT << ":int_d:" << double_d << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "double_d2", double_d2, what));
-  COUT << ":int_d2:" << double_d2 << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "string_s", string_s, what));
-  COUT << ":string_s:" << string_s << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "vector_string", vector_string, what));
-  COUT << ":vector_string:" << ru::to_string(vector_string) << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "vector_int", vector_int, what));
-  COUT << ":vector_int:" << ru::to_string(vector_int) << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "vector_double", vector_double, what));
-  COUT << ":vector_double:" << ru::to_string(vector_double) << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "matrix_int", matrix_int, what));
-  COUT << ":matrix_int:" << ru::to_string(matrix_int) << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "matrix_double", matrix_double, what));
-  COUT << ":matrix_double:" << ru::to_string(matrix_double) << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "matrix_string", matrix_string, what));
-  COUT << ":matrix_string:" << ru::to_string(matrix_string) << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "vector_double", vectorxd, what));
-  COUT << ":vectorxd:" << vectorxd.transpose() << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "vector_double", vector4, what));
-  COUT << ":vector4:" << vector4.transpose() << " what:" << what << std::endl;
 
   EXPECT_FALSE(ru::getParam(nh, "vector_double", vector10, what));
   COUT << ":vector100:" << vector10.transpose() << " what:" << what  << std::endl;
@@ -290,25 +305,15 @@ TEST(TestSuite, getParamMethods)
   Eigen::Matrix<double, 4, 1> vector4def;
   vector4def.setConstant(2.0);
   EXPECT_TRUE(ru::getParam(nh, "vector_double__", vector4, what, &vector4def));
-  COUT << ":vector4:" << vector4def.transpose() << "/" << vector4.transpose() << " what:" << what  << std::endl;
 
   Eigen::Matrix < double, -1, 1 > vectorxdef;
   vectorxdef.resize(7);
   vectorxdef.setConstant(3.0);
   EXPECT_TRUE(ru::getParam(nh, "vector_double__", vectorxd, what, &vectorxdef));
-  COUT << ":vectorxd:" << vectorxd.transpose() << "/" << vectorxdef.transpose() << " what:" << what  << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "matrix_double", matrixxd, what));
-  COUT << ":matrixxd:" << matrixxd << " what:" << what << std::endl;
-
   EXPECT_TRUE(ru::getParam(nh, "matrix_double", matrix22, what));
-  COUT << ":matrix22:" << matrix22 << " what:" << what << std::endl;
-
   EXPECT_FALSE(ru::getParam(nh, "matrix_double", matrix1010, what));
-  COUT << ":matrix1010:" << matrix1010 << " what:" << what  << std::endl;
-
   EXPECT_FALSE(ru::getParam(nh, "matrix_double", vectorxd, what));
-  COUT << ":vectorxd:" << vectorxd.transpose() << " what:" << what  << std::endl;
 }
 
 // Declare a test
@@ -320,9 +325,7 @@ TEST(TestSuite, paramVectors1dVector)
 
   std::string what;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/A", vector_double, what));
-  COUT << ":vectors:" << ru::to_string(vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/B", vector_double, what));
-  COUT << ":vectors:" << ru::to_string(vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_FALSE(ru::getParam(nh, "/test_vectors_1d/C", vector_double, what));
   COUT << ":vectors:" << " what:" << what << std::endl;
 }
@@ -338,11 +341,8 @@ TEST(TestSuite, paramVectors1dMatrix)
 
 //=====================
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/A", matrix_double, what));
-  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/B", matrix_double, what));
-  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/C", matrix_double, what));
-  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
 }
 
 
@@ -355,9 +355,7 @@ TEST(TestSuite, paramEigenVectors1dVectorXd)
 
   std::string what;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/A", vector_double, what));
-  COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/B", vector_double, what));
-  COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_FALSE(ru::getParam(nh, "/test_vectors_1d/C", vector_double, what));
   COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
 }
@@ -371,9 +369,7 @@ TEST(TestSuite, paramEigenVectors1dMatrixXd)
 
   std::string what;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/A", matrix_double, what));
-  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/B", matrix_double, what));
-  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/C", matrix_double, what));
   COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
 }
@@ -386,7 +382,6 @@ TEST(TestSuite, paramVectors2dVector)
 
   std::string what;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/A", vector_double, what));
-  COUT << ":vectors:" << ru::to_string(vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_FALSE(ru::getParam(nh, "/test_vectors_2d/B", vector_double, what));
   COUT << ":vectors:" << ( what.size()>0? " what: " + what : "")  << std::endl;
 }
@@ -402,9 +397,7 @@ TEST(TestSuite, paramVectors2dMatrix)
 
 //=====================
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/A", matrix_double, what));
-  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/B", matrix_double, what));
-  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
 }
 
 
@@ -417,7 +410,6 @@ TEST(TestSuite, paramEigenVectors2dVectorXd)
 
   std::string what;
   EXPECT_TRUE(ru::getParam(nh, "A", vector_double, what));
-  COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_FALSE(ru::getParam(nh, "B", vector_double, what));
   COUT << ":vectors:" << ( what.size()>0? " what: " + what : "")  << std::endl;
 }
@@ -431,9 +423,7 @@ TEST(TestSuite, paramEigenVectors2dMatrixXd)
 
   std::string what;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/A", matrix_double, what));
-  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
   EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/B", matrix_double, what));
-  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
 }
 
 

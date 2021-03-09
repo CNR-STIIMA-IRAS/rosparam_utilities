@@ -596,7 +596,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<D
       if(!utils::resize(_val, (expected_rows==1 ? 1 : dim), (expected_rows==1 ? dim : 1)))
       {
           throw std::runtime_error("It was expected a vector (" +
-                                     std::to_string(expected_rows) + "x" + std::to_string(expected_rows) +
+                                     std::to_string(expected_rows) + "x" + std::to_string(expected_cols) +
                                       ") while the param store a " + std::to_string(dim) +"-vector");
       }
       for(int i=0;i<dim;i++)
@@ -611,7 +611,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<D
       if(!utils::resize(_val,rows,cols))
       {
           throw std::runtime_error("It was expected a vector (" +
-                                     std::to_string(expected_rows) + "x" + std::to_string(expected_rows) +
+                                     std::to_string(expected_rows) + "x" + std::to_string(expected_cols) +
                                       ") while the param store a (" + std::to_string(rows)+"x"+ std::to_string(cols)+ +") matrix");
       }
       for(int i=0;i<rows;i++)
