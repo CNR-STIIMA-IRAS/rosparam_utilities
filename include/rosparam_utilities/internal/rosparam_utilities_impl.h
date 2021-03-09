@@ -46,6 +46,49 @@
 namespace utils
 {
 
+/**
+ * RESIZE - SAFE FUNCTION CALLED ONLY IF THE MATRIX IS DYNAMICALLY CREATED AT RUNTIME
+ */
+template<typename Derived,
+         	typename std::enable_if<
+                            (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic)
+                             || (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic)
+                        , int>::type = 0 >
+inline bool resize(Eigen::MatrixBase<Derived> const & m, int rows, int cols)
+{
+  Eigen::MatrixBase<Derived>& mat = const_cast< Eigen::MatrixBase<Derived>& >(m);
+  if((Eigen::MatrixBase<Derived>::RowsAtCompileTime ==Eigen::Dynamic)
+  && (Eigen::MatrixBase<Derived>::ColsAtCompileTime ==Eigen::Dynamic))
+  {
+    mat.derived().resize(rows,cols);
+  }
+  else if(Eigen::MatrixBase<Derived>::RowsAtCompileTime ==Eigen::Dynamic)
+  {
+    mat.derived().resize(rows,Eigen::NoChange);
+  }
+  else if(Eigen::MatrixBase<Derived>::ColsAtCompileTime ==Eigen::Dynamic)
+  {
+    mat.derived().resize(Eigen::NoChange, cols);
+  }
+  return (mat.derived().rows() == rows) && (mat.derived().cols() == cols);
+}
+
+
+template<typename Derived,
+           typename std::enable_if< (Eigen::MatrixBase<Derived>::RowsAtCompileTime != Eigen::Dynamic)
+                        && (Eigen::MatrixBase<Derived>::ColsAtCompileTime != Eigen::Dynamic)
+                        , int>::type = 0 >
+inline bool resize(Eigen::MatrixBase<Derived> const & /*m*/, int rows, int cols)
+{
+  return Eigen::MatrixBase<Derived>::RowsAtCompileTime == rows
+      && Eigen::MatrixBase<Derived>::ColsAtCompileTime == cols;
+}
+
+inline bool resize(const double& /*m*/, int rows, int cols)
+{
+  return rows==1 && cols ==1;
+}
+
 // Using const & and const_cast to modify value ... weird syntax of eigen
 template < typename Derived, typename OtherDerived,
            typename std::enable_if < (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic)
@@ -352,29 +395,30 @@ inline T fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, const std::string& key
 template<typename T>
 inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<T>& val)
 {
-  XmlRpc::XmlRpcValue config(node);
-  if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
-  {
-    throw std::runtime_error("Type inconsistency (expected a vector<>, while param is not an array)");
-  }
-
   val.clear();
-  for (int j = 0; j < config.size(); ++j)
+  try
   {
-    try
+    XmlRpc::XmlRpcValue config(node);
+    if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
     {
       T element;
-      fromXmlRpcValue(config[j], element);
+      fromXmlRpcValue(node,element);
       val.push_back(element);
     }
-    catch (std::exception& e)
+    else
     {
-      throw std::runtime_error(e.what());
+      for (int j=0; j<config.size(); ++j)
+      {
+        T element;
+        fromXmlRpcValue(config[j], element);
+        val.push_back(element);
+      }
     }
-    catch (...)
-    {
-      throw std::runtime_error("Wrong Format.");
-    }
+  }
+  catch(std::exception& e)
+  {
+    throw std::runtime_error(("Type inconsistency (expected a vector<>, while param is not an array): "
+                                + std::string(e.what())).c_str());
   }
 }
 
@@ -481,29 +525,30 @@ void toXmlRpcValue(const std::array<T, n>& val, XmlRpc::XmlRpcValue& node)
 template<typename T>
 inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<std::vector<T>>& vv)
 {
-  XmlRpc::XmlRpcValue config(node);
-  if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
+  try
   {
-    throw std::runtime_error("Type inconsistency (expected a vector<vector<>>, while param is not an array)");
+    vv.clear();
+    XmlRpc::XmlRpcValue config(node);
+    if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
+    {
+      std::vector<T> element;
+      fromXmlRpcValue(node,element);
+      vv.push_back(element);
+    }
+    else
+    {
+      for (int i = 0; i < config.size(); ++i)
+      {
+        std::vector<T> v;
+        fromXmlRpcValue(config[i], v);
+        vv.push_back(v);
+      }
+    }
   }
-
-  vv.clear();
-  for (int i = 0; i < config.size(); ++i)
+  catch(std::exception& e)
   {
-    try
-    {
-      std::vector<T> v;
-      fromXmlRpcValue(config[i], v);
-      vv.push_back(v);
-    }
-    catch (std::exception& e)
-    {
-      throw std::runtime_error(e.what());
-    }
-    catch (...)
-    {
-      throw std::runtime_error("Wrong Format.");
-    }
+    throw std::runtime_error(("Type inconsistency (expected a vector<vector<>>, while param is not an array): "
+                                + std::string(e.what())).c_str());
   }
 }
 
@@ -533,81 +578,66 @@ template<typename Derived>
 inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<Derived> const & val)
 {
   XmlRpc::XmlRpcValue config(node);
-  if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
-  {
-    throw std::runtime_error("Type inconsistency (expected a Eigen::Matrix<>, while the param is not an array)");
-  }
 
   try
   {
+    //***************
+    std::vector<std::vector<double>> vv;
+    fromXmlRpcValue(node,vv);
+    //***************
+
+    int rows = vv.size();
+    int cols = vv.front().size();
+    bool is_a_vector = (rows==1 || cols==1);
+
+    int expected_rows = Eigen::MatrixBase<Derived>::RowsAtCompileTime;
+    int expected_cols = Eigen::MatrixBase<Derived>::ColsAtCompileTime;
+
     Eigen::MatrixBase<Derived>& _val = const_cast< Eigen::MatrixBase<Derived>& >(val);
-    if (Eigen::MatrixBase<Derived>::ColsAtCompileTime == 1)
+
+    if(!is_a_vector)
     {
-      std::vector<double> v;
-      fromXmlRpcValue(config, v);
-      std::cout << rosparam_utilities::to_string(v) << std::endl;
-      if (Eigen::MatrixBase<Derived>::RowsAtCompileTime == -1)
+      if(!utils::resize(_val, rows, cols))
       {
-        _val.derived().resize(v.size(), 1);
+          throw std::runtime_error("The expected dimension of the matrix was (" +
+                                     std::to_string(expected_rows) + "x" + std::to_string(expected_rows) +
+                                      ") while the param store a (" +
+                                        std::to_string(rows) + "x" + std::to_string(cols) +") matrix");
       }
-      else
-      {
-        if (Eigen::MatrixBase<Derived>::RowsAtCompileTime != v.size())
-        {
-          throw std::runtime_error("Vector in param has a size differen from the expected fixed-size vector.");
-        }
-      }
-      for (size_t i = 0; i < v.size(); i++)
-      {
-        _val(i) = v.at(i);
-      }
+      for(size_t i=0;i<rows;i++)
+        for(size_t j=0;j<cols;j++)
+          _val(static_cast<int>(i),static_cast<int>(j)) = vv.at(i).at(j);
     }
     else
     {
-      std::vector< std::vector<double> > v;
-      fromXmlRpcValue(config, v);
-      if ((Eigen::MatrixBase<Derived>::RowsAtCompileTime == -1)
-          && (Eigen::MatrixBase<Derived>::ColsAtCompileTime == -1))
+      int dim = std::max(rows,cols);
+      bool should_be_a_col_vector = (expected_cols==1);
+      if(should_be_a_col_vector)
       {
-        _val.derived().resize(v.size(), v.front().size());
-      }
-      else if (Eigen::MatrixBase<Derived>::RowsAtCompileTime == -1)
-      {
-        if (Eigen::MatrixBase<Derived>::ColsAtCompileTime != v.front().size())
+        if(!utils::resize(_val, dim, 1))
         {
-          throw std::runtime_error("The matrix stored in the param has a colum-size different from "
-                                    "the expected fixed-colums-size matrix.");
-        }
-      }
-      else if (Eigen::MatrixBase<Derived>::ColsAtCompileTime == -1)
-      {
-        if (Eigen::MatrixBase<Derived>::RowsAtCompileTime != v.size())
-        {
-          throw std::runtime_error("The maatrix stored in param has a row-size different from "
-                                      "the expected fixed-rows-size matrix.");
+          throw std::runtime_error("The expected dimension of the vector was (" +
+                                     std::to_string(expected_rows) + "x" + std::to_string(expected_rows) +
+                                      ") while the param store a (" +
+                                        std::to_string(dim) + "x" + std::to_string(1) +") vector");
         }
       }
       else
       {
-        if ((Eigen::MatrixBase<Derived>::RowsAtCompileTime != v.size())
-            || (Eigen::MatrixBase<Derived>::ColsAtCompileTime != v.front().size()))
+        if(!utils::resize(_val, 1, dim))
         {
-          throw std::runtime_error("Matrix in param has a different from the expected fixed-size matrix.");
+          throw std::runtime_error("The expected dimension of the vector was (" +
+                                     std::to_string(expected_rows) + "x" + std::to_string(expected_rows) +
+                                      ") while the param store a (" +
+                                        std::to_string(dim) + "x" + std::to_string(1) +") vector");
         }
       }
-
-      for (size_t i = 0; i < v.size(); i++)
-      {
-        if (v.at(i).size() != v.front().size())
-        {
-          throw std::runtime_error("Not all the matrix-rows have the same size");
-        }
-        for (size_t j = 0; j < v.at(i).size(); j++)
-        {
-          _val(i, j) = v.at(i).at(j);
-        }
-      }
+      int k=0;
+      for(size_t i=0;i<rows;i++)
+        for(size_t j=0;j<cols;j++)
+          _val(k++) = vv.at(i).at(j);
     }
+
   }
   catch (std::exception& e)
   {

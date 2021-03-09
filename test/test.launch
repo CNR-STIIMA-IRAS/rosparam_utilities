@@ -60,6 +60,27 @@
     - [1.0,1.0, 1.0]
 </rosparam>
 
+<rosparam>
+  test_vectors:
+    vectors:
+      A: 1.0
+      B: [1.0]
+      C: [[1.0]]
+    matrixes:
+      A: 1.0
+      B: [1.0]
+      C: [[1.0]]
+    colum_vectors:
+      A: 1.0
+      B: [1.0]
+      C: [[1.0]]
+    row_vectors:
+      A: 1.0
+      B: [1.0]
+      C: [[1.0]]
+
+</rosparam>
+
 <group if="$(arg valgrind)">
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix"

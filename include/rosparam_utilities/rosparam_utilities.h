@@ -143,7 +143,6 @@ bool getParam(const XmlRpc::XmlRpcValue& node, const std::string& key, T& ret, c
 template<class T>
 bool getParam(const XmlRpc::XmlRpcValue& node, T& ret, const std::string& log_key = "");
 
-
 template<class T>
 bool setParam(ros::NodeHandle& nh, const std::string& key, const std::vector< std::vector<T> >& mtx);
 

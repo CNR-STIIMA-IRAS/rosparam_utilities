@@ -240,6 +240,22 @@ TEST(TestSuite, getParamMethods)
   // To be added test for ru::setParam
 }
 
+// Declare a test
+TEST(TestSuite, paramVectors)
+{
+  ros::NodeHandle nh("/test_vectors");
+
+  std::vector<double> vector_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors/vectors/A", vector_double, what));
+  COUT << ":vectors:" << " what:" << what << ", " << ru::to_string(vector_double) << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors/vectors/B", vector_double, what));
+  COUT << ":vectors:" << " what:" << what << ", " << ru::to_string(vector_double) << std::endl;
+  EXPECT_FALSE(ru::getParam(nh, "/test_vectors/vectors/C", vector_double, what));
+  COUT << ":vectors:" << " what:" << what << ", " << ru::to_string(vector_double) << std::endl;
+
+}
 
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
