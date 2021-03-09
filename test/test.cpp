@@ -46,35 +46,9 @@
 #include <ros/ros.h>
 #include <rosparam_utilities/rosparam_utilities.h>
 
-//template<typename T>
-//std::string to_string(const std::vector<T>& vv)
-//{
-//  std::string ret="[ ";
-//  for(auto const & v : vv) ret += std::to_string(v) +" ";
-//  ret +="]";
-//  return ret;
-//}
+namespace ru = rosparam_utilities;
 
-//template<>
-//std::string to_string(const std::vector<std::string>& vv)
-//{
-//  std::string ret="[ ";
-//  for(auto const & v : vv) ret += v +" ";
-//  ret +="]";
-//  return ret;
-//}
-
-
-//template<typename T>
-//std::string to_string(const std::vector<std::vector<T>>& vv)
-//{
-//  std::string ret="[ ";
-//  for(auto const & v : vv) ret += to_string(v) +"\n";
-//  ret +="]";
-//  return ret;
-//}
-
-
+#define COUT std::cout << __LINE__
 
 // Declare a test
 TEST(TestSuite, rawMethods)
@@ -97,9 +71,9 @@ TEST(TestSuite, rawMethods)
   };
 
   XmlRpc::XmlRpcValue node;
-  EXPECT_TRUE(nh.getParam("struct", node) );
+  EXPECT_TRUE(nh.getParam("struct", node));
 
-  EXPECT_TRUE(rosparam_utilities::check(node, required_fields));
+  EXPECT_TRUE(ru::check(node, required_fields));
 
   int int_i = 0;
   int int_i2 = 0;
@@ -114,79 +88,65 @@ TEST(TestSuite, rawMethods)
   std::vector<std::vector<std::string>> matrix_string;
 
   Eigen::VectorXd vectorxd;
-  Eigen::Matrix<double, 10, 1> vector10;vector10.setZero();
-  Eigen::Matrix<double, 4, 1> vector4;vector4.setZero();
+  Eigen::Matrix<double, 10, 1> vector10;
+  vector10.setZero();
+  Eigen::Matrix<double, 4, 1> vector4;
+  vector4.setZero();
 
   Eigen::MatrixXd matrixxd;
-  Eigen::Matrix<double, 10, 10> matrix1010;matrix1010.setZero();
-  Eigen::Matrix<double, 2, 2>   matrix22;matrix22.setZero();
+  Eigen::Matrix<double, 10, 10> matrix1010;
+  matrix1010.setZero();
+  Eigen::Matrix<double, 2, 2>   matrix22;
+  matrix22.setZero();
 
 
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["int_i"         ], int_i         ));
-  std::cout << __LINE__ <<":int_i:" << int_i << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["int_i2"        ], int_i2        ));
-  std::cout << __LINE__ <<":int_i2:" << int_i2 << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["double_d"      ], double_d      ));
-  std::cout << __LINE__ <<":int_d:" << double_d << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["double_d2"     ], double_d2     ));
-  std::cout << __LINE__ <<":int_d2:" << double_d2 << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["string_s"      ], string_s      ));
-  std::cout << __LINE__ <<":string_s:" << string_s << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["vector_string" ], vector_string ));
-  std::cout << __LINE__ <<":vector_string:" << rosparam_utilities::to_string(vector_string) << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["vector_int"    ], vector_int    ));
-  std::cout << __LINE__ <<":vector_int:" << rosparam_utilities::to_string(vector_int) << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["vector_double" ], vector_double ));
-  std::cout << __LINE__ <<":vector_double:" << rosparam_utilities::to_string(vector_double) << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i"         ], int_i));
+  COUT << ":int_i:" << int_i << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i2"        ], int_i2));
+  COUT << ":int_i2:" << int_i2 << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["double_d"      ], double_d));
+  COUT << ":int_d:" << double_d << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["double_d2"     ], double_d2));
+  COUT << ":int_d2:" << double_d2 << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["string_s"      ], string_s));
+  COUT << ":string_s:" << string_s << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_string" ], vector_string));
+  COUT << ":vector_string:" << ru::to_string(vector_string) << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_int"    ], vector_int));
+  COUT << ":vector_int:" << ru::to_string(vector_int) << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_double" ], vector_double));
+  COUT << ":vector_double:" << ru::to_string(vector_double) << std::endl;
 
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["matrix_int"    ], matrix_int    ));
-  std::cout << __LINE__ <<":matrix_int:" << rosparam_utilities::to_string(matrix_int) << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["matrix_double" ], matrix_double ));
-  std::cout << __LINE__ <<":matrix_double:" << rosparam_utilities::to_string(matrix_double) << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["matrix_string" ], matrix_string ));
-  std::cout << __LINE__ <<":matrix_string:" << rosparam_utilities::to_string(matrix_string) << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_int"    ], matrix_int));
+  COUT << ":matrix_int:" << ru::to_string(matrix_int) << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_double" ], matrix_double));
+  COUT << ":matrix_double:" << ru::to_string(matrix_double) << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_string" ], matrix_string));
+  COUT << ":matrix_string:" << ru::to_string(matrix_string) << std::endl;
 
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["vector_double" ], vectorxd ));
-  std::cout << __LINE__ <<":vectorxd:" << vectorxd.transpose() << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["vector_double" ], vector4 ));
-  std::cout << __LINE__ <<":vector4:" << vector4.transpose() << std::endl;
-  EXPECT_ANY_THROW(        rosparam_utilities::fromXmlRpcValue(node["vector_double" ], vector10 ));
-  std::cout << __LINE__ <<":vector100:" << vector10.transpose() << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_double" ], vectorxd));
+  COUT << ":vectorxd:" << vectorxd.transpose() << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["vector_double" ], vector4));
+  COUT << ":vector4:" << vector4.transpose() << std::endl;
+  EXPECT_ANY_THROW(ru::fromXmlRpcValue(node["vector_double" ], vector10));
+  COUT << ":vector100:" << vector10.transpose() << std::endl;
 
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["matrix_double" ], matrixxd ));
-  std::cout << __LINE__ <<":matrixxd:" << matrixxd << std::endl;
-  EXPECT_NO_FATAL_FAILURE( rosparam_utilities::fromXmlRpcValue(node["matrix_double" ], matrix22 ));
-  std::cout << __LINE__ <<":matrix22:" << matrix22 << std::endl;
-  EXPECT_ANY_THROW(        rosparam_utilities::fromXmlRpcValue(node["matrix_double" ], matrix1010 ));
-  std::cout << __LINE__ <<":matrix1010:" << matrix1010 << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_double" ], matrixxd));
+  COUT << ":matrixxd:" << matrixxd << std::endl;
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["matrix_double" ], matrix22));
+  COUT << ":matrix22:" << matrix22 << std::endl;
+  EXPECT_ANY_THROW(ru::fromXmlRpcValue(node["matrix_double" ], matrix1010));
+  COUT << ":matrix1010:" << matrix1010 << std::endl;
 
-  EXPECT_ANY_THROW(        rosparam_utilities::fromXmlRpcValue(node["matrix_double" ], vectorxd ));
-  std::cout << __LINE__ <<":vectorxd:" << vectorxd.transpose() << std::endl;
-
+  EXPECT_ANY_THROW(ru::fromXmlRpcValue(node["matrix_double" ], vectorxd));
+  COUT << ":vectorxd:" << vectorxd.transpose() << std::endl;
 }
-
 
 // Declare a test
 TEST(TestSuite, getParamMethods)
 {
   ros::NodeHandle nh("/ns_exist/struct");
 
-//  std::vector<std::string> required_fields =
-//  {
-//    "int_i",
-//    "int_i2",
-//    "double_d",
-//    "double_d2",
-//    "string_s",
-//    "vector_string",
-//    "vector_int",
-//    "vector_double",
-//    "matrix_int",
-//    "matrix_double",
-//    "matrix_string"
-//  };
-
-
   int int_i = 0;
   int int_i2 = 0;
   double double_d = 0.0;
@@ -200,78 +160,84 @@ TEST(TestSuite, getParamMethods)
   std::vector<std::vector<std::string>> matrix_string;
 
   Eigen::VectorXd vectorxd;
-  Eigen::Matrix<double, 10, 1> vector10;vector10.setZero();
-  Eigen::Matrix<double, 4, 1> vector4;vector4.setZero();
+  Eigen::Matrix<double, 10, 1> vector10;
+  vector10.setZero();
+  Eigen::Matrix<double, 4, 1> vector4;
+  vector4.setZero();
 
   Eigen::MatrixXd matrixxd;
-  Eigen::Matrix<double, 10, 10> matrix1010;matrix1010.setZero();
-  Eigen::Matrix<double, 2, 2>   matrix22;matrix22.setZero();
+  Eigen::Matrix<double, 10, 10> matrix1010;
+  matrix1010.setZero();
+  Eigen::Matrix<double, 2, 2>   matrix22;
+  matrix22.setZero();
 
   std::string what;
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "int_i", int_i, what));
-  std::cout << __LINE__ <<":int_i:" << int_i <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "int_i", int_i, what));
+  COUT << ":int_i:" << int_i << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "int_i2", int_i2, what));
-  std::cout << __LINE__ <<":int_i2:" << int_i2 <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "int_i2", int_i2, what));
+  COUT << ":int_i2:" << int_i2 << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "double_d", double_d, what));
-  std::cout << __LINE__ <<":int_d:" << double_d <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "double_d", double_d, what));
+  COUT << ":int_d:" << double_d << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "double_d2", double_d2, what));
-  std::cout << __LINE__ <<":int_d2:" << double_d2 <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "double_d2", double_d2, what));
+  COUT << ":int_d2:" << double_d2 << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "string_s", string_s, what));
-  std::cout << __LINE__ <<":string_s:" << string_s <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "string_s", string_s, what));
+  COUT << ":string_s:" << string_s << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "vector_string", vector_string, what));
-  std::cout << __LINE__ <<":vector_string:" << rosparam_utilities::to_string(vector_string) <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "vector_string", vector_string, what));
+  COUT << ":vector_string:" << ru::to_string(vector_string) << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "vector_int", vector_int, what));
-  std::cout << __LINE__ <<":vector_int:" << rosparam_utilities::to_string(vector_int) <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "vector_int", vector_int, what));
+  COUT << ":vector_int:" << ru::to_string(vector_int) << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "vector_double", vector_double, what));
-  std::cout << __LINE__ <<":vector_double:" << rosparam_utilities::to_string(vector_double) <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "vector_double", vector_double, what));
+  COUT << ":vector_double:" << ru::to_string(vector_double) << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "matrix_int", matrix_int, what));
-  std::cout << __LINE__ <<":matrix_int:" << rosparam_utilities::to_string(matrix_int) <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "matrix_int", matrix_int, what));
+  COUT << ":matrix_int:" << ru::to_string(matrix_int) << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "matrix_double", matrix_double, what));
-  std::cout << __LINE__ <<":matrix_double:" << rosparam_utilities::to_string(matrix_double) <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "matrix_double", matrix_double, what));
+  COUT << ":matrix_double:" << ru::to_string(matrix_double) << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "matrix_string", matrix_string, what));
-  std::cout << __LINE__ <<":matrix_string:" << rosparam_utilities::to_string(matrix_string) <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "matrix_string", matrix_string, what));
+  COUT << ":matrix_string:" << ru::to_string(matrix_string) << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "vector_double", vectorxd, what));
-  std::cout << __LINE__ <<":vectorxd:" << vectorxd.transpose() <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "vector_double", vectorxd, what));
+  COUT << ":vectorxd:" << vectorxd.transpose() << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "vector_double", vector4, what));
-  std::cout << __LINE__ <<":vector4:" << vector4.transpose() <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "vector_double", vector4, what));
+  COUT << ":vector4:" << vector4.transpose() << " what:" << what << std::endl;
 
-  EXPECT_FALSE( rosparam_utilities::getParam(nh, "vector_double", vector10, what));
-  std::cout << __LINE__ <<":vector100:" << vector10.transpose() <<" what:" << what  << std::endl;
+  EXPECT_FALSE(ru::getParam(nh, "vector_double", vector10, what));
+  COUT << ":vector100:" << vector10.transpose() << " what:" << what  << std::endl;
 
-  Eigen::Matrix<double, 4, 1> vector4def;vector4def.setConstant(2.0);
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "vector_double__", vector4, what, &vector4def));
-  std::cout << __LINE__ <<":vector4:" << vector4def.transpose() <<"/" <<vector4.transpose() <<" what:" << what  << std::endl;
+  Eigen::Matrix<double, 4, 1> vector4def;
+  vector4def.setConstant(2.0);
+  EXPECT_TRUE(ru::getParam(nh, "vector_double__", vector4, what, &vector4def));
+  COUT << ":vector4:" << vector4def.transpose() << "/" << vector4.transpose() << " what:" << what  << std::endl;
 
-  Eigen::Matrix<double, -1, 1> vectorxdef;vectorxdef.resize(7); vectorxdef.setConstant(3.0);
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "vector_double__", vectorxd, what, &vectorxdef));
-  std::cout << __LINE__ <<":vectorxd:" << vectorxd.transpose() <<"/" <<vectorxdef.transpose() <<" what:" << what  << std::endl;
+  Eigen::Matrix < double, -1, 1 > vectorxdef;
+  vectorxdef.resize(7);
+  vectorxdef.setConstant(3.0);
+  EXPECT_TRUE(ru::getParam(nh, "vector_double__", vectorxd, what, &vectorxdef));
+  COUT << ":vectorxd:" << vectorxd.transpose() << "/" << vectorxdef.transpose() << " what:" << what  << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "matrix_double", matrixxd, what));
-  std::cout << __LINE__ <<":matrixxd:" << matrixxd <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "matrix_double", matrixxd, what));
+  COUT << ":matrixxd:" << matrixxd << " what:" << what << std::endl;
 
-  EXPECT_TRUE( rosparam_utilities::getParam(nh, "matrix_double", matrix22, what));
-  std::cout << __LINE__ <<":matrix22:" << matrix22 <<" what:" << what << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "matrix_double", matrix22, what));
+  COUT << ":matrix22:" << matrix22 << " what:" << what << std::endl;
 
-  EXPECT_FALSE(rosparam_utilities::getParam(nh, "matrix_double", matrix1010, what));
-  std::cout << __LINE__ <<":matrix1010:" << matrix1010<<" what:" << what  << std::endl;
+  EXPECT_FALSE(ru::getParam(nh, "matrix_double", matrix1010, what));
+  COUT << ":matrix1010:" << matrix1010 << " what:" << what  << std::endl;
 
-  EXPECT_FALSE(rosparam_utilities::getParam(nh, "matrix_double", vectorxd, what));
-  std::cout << __LINE__ <<":vectorxd:" << vectorxd.transpose() <<" what:" << what  << std::endl;
+  EXPECT_FALSE(ru::getParam(nh, "matrix_double", vectorxd, what));
+  COUT << ":vectorxd:" << vectorxd.transpose() << " what:" << what  << std::endl;
 
-  // To be added test for rosparam_utilities::setParam
-
+  // To be added test for ru::setParam
 }
 
 
@@ -280,7 +246,9 @@ int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ros::init(argc,argv,"test");
+  ros::init(argc, argv, "test");
 
   return RUN_ALL_TESTS();
 }
+
+#undef COUT
