@@ -340,14 +340,14 @@ TEST(TestSuite, paramVectors2dMatrix)
 // Declare a test
 TEST(TestSuite, paramEigenVectors2dVectorXd)
 {
-  ros::NodeHandle nh("/test_vectors");
+  ros::NodeHandle nh("/test_vectors_2d");
 
   Eigen::VectorXd vector_double;
 
   std::string what;
-  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/A", vector_double, what));
+  EXPECT_TRUE(ru::getParam(nh, "A", vector_double, what));
   COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
-  EXPECT_FALSE(ru::getParam(nh, "/test_vectors_2d/B", vector_double, what));
+  EXPECT_FALSE(ru::getParam(nh, "B", vector_double, what));
   COUT << ":vectors:" << ( what.size()>0? " what: " + what : "")  << std::endl;
 }
 

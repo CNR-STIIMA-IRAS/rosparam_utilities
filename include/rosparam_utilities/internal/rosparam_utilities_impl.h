@@ -243,8 +243,8 @@ inline bool set(const std::string& key, const T& val, std::string& what)
 template<typename T>
 inline bool getParam(const ros::NodeHandle& nh, const std::string& key, T& ret, std::string& what, const T* default_val)
 {
-  std::string key_ = (key.rfind("/") == 0) ? key : nh.getNamespace() + "/" + key;
-  return get(key, ret, what, default_val);
+  std::string key_ = (key.find("/") == 0) ? key : nh.getNamespace() + "/" + key;
+  return get(key_, ret, what, default_val);
 }
 
 template<typename T>
