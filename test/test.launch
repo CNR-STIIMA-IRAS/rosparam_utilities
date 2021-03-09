@@ -61,24 +61,13 @@
 </rosparam>
 
 <rosparam>
-  test_vectors:
-    vectors:
-      A: 1.0
-      B: [1.0]
-      C: [[1.0]]
-    matrixes:
-      A: 1.0
-      B: [1.0]
-      C: [[1.0]]
-    colum_vectors:
-      A: 1.0
-      B: [1.0]
-      C: [[1.0]]
-    row_vectors:
-      A: 1.0
-      B: [1.0]
-      C: [[1.0]]
-
+  test_vectors_1d:
+    A: 1.0
+    B: [1.0]
+    C: [[1.0]]
+  test_vectors_2d:
+    A: [1.0, 2.0]
+    B: [[1.0], [2.0]]
 </rosparam>
 
 <group if="$(arg valgrind)">

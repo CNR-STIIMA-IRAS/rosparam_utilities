@@ -241,21 +241,131 @@ TEST(TestSuite, getParamMethods)
 }
 
 // Declare a test
-TEST(TestSuite, paramVectors)
+TEST(TestSuite, paramVectors1dVector)
 {
   ros::NodeHandle nh("/test_vectors");
 
   std::vector<double> vector_double;
 
   std::string what;
-  EXPECT_TRUE(ru::getParam(nh, "/test_vectors/vectors/A", vector_double, what));
-  COUT << ":vectors:" << " what:" << what << ", " << ru::to_string(vector_double) << std::endl;
-  EXPECT_TRUE(ru::getParam(nh, "/test_vectors/vectors/B", vector_double, what));
-  COUT << ":vectors:" << " what:" << what << ", " << ru::to_string(vector_double) << std::endl;
-  EXPECT_FALSE(ru::getParam(nh, "/test_vectors/vectors/C", vector_double, what));
-  COUT << ":vectors:" << " what:" << what << ", " << ru::to_string(vector_double) << std::endl;
-
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/A", vector_double, what));
+  COUT << ":vectors:" << ru::to_string(vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/B", vector_double, what));
+  COUT << ":vectors:" << ru::to_string(vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_FALSE(ru::getParam(nh, "/test_vectors_1d/C", vector_double, what));
+  COUT << ":vectors:" << " what:" << what << std::endl;
 }
+
+
+TEST(TestSuite, paramVectors1dMatrix)
+{
+  ros::NodeHandle nh("/test_vectors");
+
+  std::vector<std::vector<double>> matrix_double;
+
+  std::string what;
+
+//=====================
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/A", matrix_double, what));
+  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/B", matrix_double, what));
+  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/C", matrix_double, what));
+  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+}
+
+
+// Declare a test
+TEST(TestSuite, paramEigenVectors1dVectorXd)
+{
+  ros::NodeHandle nh("/test_vectors");
+
+  Eigen::VectorXd vector_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/A", vector_double, what));
+  COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/B", vector_double, what));
+  COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_FALSE(ru::getParam(nh, "/test_vectors_1d/C", vector_double, what));
+  COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+}
+
+// Declare a test
+TEST(TestSuite, paramEigenVectors1dMatrixXd)
+{
+  ros::NodeHandle nh("/test_vectors");
+
+  Eigen::MatrixXd matrix_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/A", matrix_double, what));
+  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/B", matrix_double, what));
+  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_1d/C", matrix_double, what));
+  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+}
+// Declare a test
+TEST(TestSuite, paramVectors2dVector)
+{
+  ros::NodeHandle nh("/test_vectors");
+
+  std::vector<double> vector_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/A", vector_double, what));
+  COUT << ":vectors:" << ru::to_string(vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_FALSE(ru::getParam(nh, "/test_vectors_2d/B", vector_double, what));
+  COUT << ":vectors:" << ( what.size()>0? " what: " + what : "")  << std::endl;
+}
+
+
+TEST(TestSuite, paramVectors2dMatrix)
+{
+  ros::NodeHandle nh("/test_vectors");
+
+  std::vector<std::vector<double>> matrix_double;
+
+  std::string what;
+
+//=====================
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/A", matrix_double, what));
+  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/B", matrix_double, what));
+  COUT << ":vectors:" << ru::to_string(matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+}
+
+
+// Declare a test
+TEST(TestSuite, paramEigenVectors2dVectorXd)
+{
+  ros::NodeHandle nh("/test_vectors");
+
+  Eigen::VectorXd vector_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/A", vector_double, what));
+  COUT << ":vectors:" << (vector_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_FALSE(ru::getParam(nh, "/test_vectors_2d/B", vector_double, what));
+  COUT << ":vectors:" << ( what.size()>0? " what: " + what : "")  << std::endl;
+}
+
+// Declare a test
+TEST(TestSuite, paramEigenVectors2dMatrixXd)
+{
+  ros::NodeHandle nh("/test_vectors");
+
+  Eigen::MatrixXd matrix_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/A", matrix_double, what));
+  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+  EXPECT_TRUE(ru::getParam(nh, "/test_vectors_2d/B", matrix_double, what));
+  COUT << ":vectors:" << (matrix_double) << ( what.size()>0? " what: " + what : "")  << std::endl;
+}
+
+
 
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)

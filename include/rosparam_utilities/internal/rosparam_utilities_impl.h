@@ -171,6 +171,7 @@ inline std::string to_string(const std::vector<std::vector<T>>& vv)
 template<typename T>
 inline bool get(const std::string& key, T& ret, std::string& what, const T* default_val)
 {
+  what = "";
   if (!ros::param::has(key))
   {
     what = "The param '" + key + "' is not in ros param server.";
@@ -417,7 +418,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<T>& val
   }
   catch(std::exception& e)
   {
-    throw std::runtime_error(("Type inconsistency (expected a vector<>, while param is not an array): "
+    throw std::runtime_error(("Type inconsistency (expected a vector<>): "
                                 + std::string(e.what())).c_str());
   }
 }
@@ -547,7 +548,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<std::ve
   }
   catch(std::exception& e)
   {
-    throw std::runtime_error(("Type inconsistency (expected a vector<vector<>>, while param is not an array): "
+    throw std::runtime_error(("Type inconsistency (expected a vector<vector<>>): "
                                 + std::string(e.what())).c_str());
   }
 }
@@ -579,65 +580,44 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<D
 {
   XmlRpc::XmlRpcValue config(node);
 
+  int expected_rows = Eigen::MatrixBase<Derived>::RowsAtCompileTime;
+  int expected_cols = Eigen::MatrixBase<Derived>::ColsAtCompileTime;
+  bool should_be_a_vector = (expected_rows==1 || expected_cols==1);
+
   try
   {
-    //***************
-    std::vector<std::vector<double>> vv;
-    fromXmlRpcValue(node,vv);
-    //***************
-
-    int rows = vv.size();
-    int cols = vv.front().size();
-    bool is_a_vector = (rows==1 || cols==1);
-
-    int expected_rows = Eigen::MatrixBase<Derived>::RowsAtCompileTime;
-    int expected_cols = Eigen::MatrixBase<Derived>::ColsAtCompileTime;
-
     Eigen::MatrixBase<Derived>& _val = const_cast< Eigen::MatrixBase<Derived>& >(val);
 
-    if(!is_a_vector)
+    if(should_be_a_vector)
     {
-      if(!utils::resize(_val, rows, cols))
+      std::vector<double> vv;
+      fromXmlRpcValue(node,vv);
+      int dim = static_cast<int>(vv.size());
+      if(!utils::resize(_val, (expected_rows==1 ? 1 : dim), (expected_rows==1 ? dim : 1)))
       {
-          throw std::runtime_error("The expected dimension of the matrix was (" +
+          throw std::runtime_error("It was expected a vector (" +
                                      std::to_string(expected_rows) + "x" + std::to_string(expected_rows) +
-                                      ") while the param store a (" +
-                                        std::to_string(rows) + "x" + std::to_string(cols) +") matrix");
+                                      ") while the param store a " + std::to_string(dim) +"-vector");
       }
-      for(size_t i=0;i<rows;i++)
-        for(size_t j=0;j<cols;j++)
-          _val(static_cast<int>(i),static_cast<int>(j)) = vv.at(i).at(j);
+      for(int i=0;i<dim;i++)
+          _val(i) = vv.at(static_cast<size_t>(i));
     }
-    else
+    else // matrix expected
     {
-      int dim = std::max(rows,cols);
-      bool should_be_a_col_vector = (expected_cols==1);
-      if(should_be_a_col_vector)
+      std::vector<std::vector<double>> vv;
+      fromXmlRpcValue(node,vv);
+      int rows = vv.size();
+      int cols = vv.front().size();
+      if(!utils::resize(_val,rows,cols))
       {
-        if(!utils::resize(_val, dim, 1))
-        {
-          throw std::runtime_error("The expected dimension of the vector was (" +
+          throw std::runtime_error("It was expected a vector (" +
                                      std::to_string(expected_rows) + "x" + std::to_string(expected_rows) +
-                                      ") while the param store a (" +
-                                        std::to_string(dim) + "x" + std::to_string(1) +") vector");
-        }
+                                      ") while the param store a (" + std::to_string(rows)+"x"+ std::to_string(cols)+ +") matrix");
       }
-      else
-      {
-        if(!utils::resize(_val, 1, dim))
-        {
-          throw std::runtime_error("The expected dimension of the vector was (" +
-                                     std::to_string(expected_rows) + "x" + std::to_string(expected_rows) +
-                                      ") while the param store a (" +
-                                        std::to_string(dim) + "x" + std::to_string(1) +") vector");
-        }
-      }
-      int k=0;
-      for(size_t i=0;i<rows;i++)
-        for(size_t j=0;j<cols;j++)
-          _val(k++) = vv.at(i).at(j);
+      for(int i=0;i<rows;i++)
+        for(int j=0;j<cols;j++)
+          _val(i,j) = vv.at(static_cast<int>(i)).at(static_cast<int>(j));
     }
-
   }
   catch (std::exception& e)
   {
