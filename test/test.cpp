@@ -50,6 +50,26 @@ namespace ru = rosparam_utilities;
 
 #define COUT std::cout << __LINE__
 
+int int_i = 0;
+int int_i2 = 0;
+double double_d = 0.0;
+double double_d2 = 0.0;
+std::string string_s;
+std::vector<std::string> vector_string;
+std::vector<int> vector_int;
+std::vector<double> vector_double;
+std::vector<std::vector<int>> matrix_int;
+std::vector<std::vector<double>> matrix_double;
+std::vector<std::vector<std::string>> matrix_string;
+
+Eigen::VectorXd vectorxd;
+Eigen::Matrix<double, 10, 1> vector10;
+Eigen::Matrix<double, 4, 1> vector4;
+
+Eigen::MatrixXd matrixxd;
+Eigen::Matrix<double, 10, 10> matrix1010;
+Eigen::Matrix<double, 2, 2>   matrix22;
+
 // Declare a test
 TEST(TestSuite, rawMethods)
 {
@@ -70,35 +90,15 @@ TEST(TestSuite, rawMethods)
     "matrix_string"
   };
 
+  vector10.setZero();
+  vector4.setZero();
+  matrix1010.setZero();
+  matrix22.setZero();
+
   XmlRpc::XmlRpcValue node;
   EXPECT_TRUE(nh.getParam("struct", node));
 
   EXPECT_TRUE(ru::check(node, required_fields));
-
-  int int_i = 0;
-  int int_i2 = 0;
-  double double_d = 0.0;
-  double double_d2 = 0.0;
-  std::string string_s;
-  std::vector<std::string> vector_string;
-  std::vector<int> vector_int;
-  std::vector<double> vector_double;
-  std::vector<std::vector<int>> matrix_int;
-  std::vector<std::vector<double>> matrix_double;
-  std::vector<std::vector<std::string>> matrix_string;
-
-  Eigen::VectorXd vectorxd;
-  Eigen::Matrix<double, 10, 1> vector10;
-  vector10.setZero();
-  Eigen::Matrix<double, 4, 1> vector4;
-  vector4.setZero();
-
-  Eigen::MatrixXd matrixxd;
-  Eigen::Matrix<double, 10, 10> matrix1010;
-  matrix1010.setZero();
-  Eigen::Matrix<double, 2, 2>   matrix22;
-  matrix22.setZero();
-
 
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i"         ], int_i));
   COUT << ":int_i:" << int_i << std::endl;
@@ -141,6 +141,79 @@ TEST(TestSuite, rawMethods)
   EXPECT_ANY_THROW(ru::fromXmlRpcValue(node["matrix_double" ], vectorxd));
   COUT << ":vectorxd:" << vectorxd.transpose() << std::endl;
 }
+
+// Declare a test
+TEST(TestSuite, rawSetMethods)
+{
+  ros::NodeHandle nh("/ns_exist");
+
+  std::vector<std::string> required_fields =
+  {
+    "int_i",
+    "int_i2",
+    "double_d",
+    "double_d2",
+    "string_s",
+    "vector_string",
+    "vector_int",
+    "vector_double",
+    "matrix_int",
+    "matrix_double",
+    "matrix_string"
+  };
+
+  XmlRpc::XmlRpcValue node;
+
+  int int_i = 0;
+  int int_i2 = 0;
+  double double_d = 0.0;
+  double double_d2 = 0.0;
+  std::string string_s;
+  std::vector<std::string> vector_string;
+  std::vector<int> vector_int;
+  std::vector<double> vector_double;
+  std::vector<std::vector<int>> matrix_int;
+  std::vector<std::vector<double>> matrix_double;
+  std::vector<std::vector<std::string>> matrix_string;
+
+  Eigen::VectorXd vectorxd;
+  Eigen::Matrix<double, 10, 1> vector10;
+  vector10.setZero();
+  Eigen::Matrix<double, 4, 1> vector4;
+  vector4.setZero();
+
+  Eigen::MatrixXd matrixxd;
+  Eigen::Matrix<double, 10, 10> matrix1010;
+  matrix1010.setZero();
+  Eigen::Matrix<double, 2, 2>   matrix22;
+  matrix22.setZero();
+
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(int_i, node["int_i"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(int_i2, node["int_i2"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(double_d, node["double_d"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(double_d2, node["double_d2"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(string_s, node["string_s"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(vector_string, node["vector_string" ]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(vector_int, node["vector_int"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(vector_double, node["vector_double" ]));
+
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue( matrix_int, node["matrix_int" ]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(matrix_double, node["matrix_double"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(matrix_string, node["matrix_string"]));
+
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(vectorxd, node["vector_double"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(vector4,  node["vector_double"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(vector10, node["vector_double" ]));
+
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(matrixxd, node["matrix_double" ]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(matrix22, node["matrix_double" ]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(matrix1010, node["matrix_double" ]));
+
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(vectorxd, node["matrix_double" ]));
+
+  EXPECT_NO_FATAL_FAILURE(nh.setParam("struct_new", node));
+}
+
 
 // Declare a test
 TEST(TestSuite, getParamMethods)
@@ -236,8 +309,6 @@ TEST(TestSuite, getParamMethods)
 
   EXPECT_FALSE(ru::getParam(nh, "matrix_double", vectorxd, what));
   COUT << ":vectorxd:" << vectorxd.transpose() << " what:" << what  << std::endl;
-
-  // To be added test for ru::setParam
 }
 
 // Declare a test

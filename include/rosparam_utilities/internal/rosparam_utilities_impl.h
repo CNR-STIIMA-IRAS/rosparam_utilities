@@ -253,8 +253,8 @@ bool setParam(const ros::NodeHandle& nh,
                   const T& ret,
                     std::string& what)
 {
-  std::string key_ = (key.rfind("/") == 0) ? key : nh.getNamespace() + "/" + key;
-  return set(key, ret, what);
+  std::string key_ = (key.find("/") == 0) ? key : nh.getNamespace() + "/" + key;
+  return set(key_, ret, what);
 }
 // =============================================================================================
 
@@ -643,7 +643,7 @@ void toXmlRpcValue(const Eigen::MatrixBase<Derived>& val, XmlRpc::XmlRpcValue& n
   }
   else
   {
-    std::vector<std::vector<double>> mtx(val.rows,std::vector<double>(val.cols));
+    std::vector<std::vector<double>> mtx(val.rows(),std::vector<double>(val.cols()));
     for(int i=0;i<val.rows();++i)
     {
       for(int j=0;j<val.cols();++j)

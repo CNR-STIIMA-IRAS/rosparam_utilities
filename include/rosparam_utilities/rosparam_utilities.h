@@ -85,7 +85,7 @@ bool get(const std::string& key, T& ret, std::string& what, const T* default_val
  * @return true if ok, or if default value has been superimposed, false otherwise.
  */
 template<typename T>
-bool set(const std::string& key, T& ret, std::string& what);
+bool set(const std::string& key, const T& ret, std::string& what);
 //======================================================================================================================
 
 
@@ -142,17 +142,6 @@ bool getParam(const XmlRpc::XmlRpcValue& node, const std::string& key, T& ret, c
 
 template<class T>
 bool getParam(const XmlRpc::XmlRpcValue& node, T& ret, const std::string& log_key = "");
-
-template<class T>
-bool setParam(ros::NodeHandle& nh, const std::string& key, const std::vector< std::vector<T> >& mtx);
-
-bool setParam(ros::NodeHandle& nh,  const std::string& key, const std::vector<Eigen::VectorXd>& vector);
-
-template<class T>
-inline bool setParamNum(ros::NodeHandle& nh,
-                          const std::string& key,
-                            const std::vector< std::vector<T> >& mtx,
-                              unsigned int precision = 0);
 //======================================================================================================================
 
 
@@ -305,6 +294,20 @@ bool getParamArray(ros::NodeHandle& nh, const std::string& key, boost::array<T, 
 template<class T>
 [[deprecated("Use the getParam(const ros::NodeHandle&, const std::string&, T&, std::string&, const T*)")]]
 bool getParamMatrix(const ros::NodeHandle& nh, const std::string& key, std::vector< std::vector<T> >& ret);
+
+template<class T>
+[[deprecated("Use the setParam(const ros::NodeHandle&, const std::string&, const T&, std::string&)")]]
+bool setParam(ros::NodeHandle& nh, const std::string& key, const std::vector< std::vector<T> >& mtx);
+
+[[deprecated("Use the setParam(const ros::NodeHandle&, const std::string&, const T&, std::string&)")]]
+bool setParam(ros::NodeHandle& nh,  const std::string& key, const std::vector<Eigen::VectorXd>& vector);
+
+template<class T>
+[[deprecated("Use the setParam(const ros::NodeHandle&, const std::string&, const T&, std::string&)")]]
+inline bool setParamNum(ros::NodeHandle& nh,
+                          const std::string& key,
+                            const std::vector< std::vector<T> >& mtx,
+                              unsigned int precision = 0);
 
 }  // namespace rosparam_utilities
 
