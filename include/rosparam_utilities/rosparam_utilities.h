@@ -106,10 +106,10 @@ bool set(const std::string& key, const T& ret, std::string& what);
  */
 template<typename T>
 bool getParam(const ros::NodeHandle& nh,
-                const std::string& key,
-                  T& ret,
-                    std::string& what,
-                      const T* default_val = nullptr);
+              const std::string& key,
+              T& ret,
+              std::string& what,
+              const T* default_val = nullptr);
 
 /**
  * @brief set the param, and return true if found and ok. Store the error(s) in 'what'. Typical error is the
@@ -122,9 +122,9 @@ bool getParam(const ros::NodeHandle& nh,
  */
 template<typename T>
 bool setParam(const ros::NodeHandle& nh,
-                const std::string& key,
-                  const T& ret,
-                    std::string& what);
+              const std::string& key,
+              const T& ret,
+              std::string& what);
 
 //==
 /**
@@ -272,8 +272,8 @@ bool getParamArray(const XmlRpc::XmlRpcValue& node, const std::string& key, boos
 template<class T>
 [[deprecated("Use the getParam")]]
 bool getParamMatrix(const XmlRpc::XmlRpcValue& node,
-                      std::vector< std::vector<T> >& ret,
-                        const std::string& log_key = "");
+                    std::vector< std::vector<T> >& ret,
+                    const std::string& log_key = "");
 
 template<class T>
 [[deprecated("Use the getParam")]]
@@ -305,9 +305,9 @@ bool setParam(ros::NodeHandle& nh,  const std::string& key, const std::vector<Ei
 template<class T>
 [[deprecated("Use the setParam(const ros::NodeHandle&, const std::string&, const T&, std::string&)")]]
 inline bool setParamNum(ros::NodeHandle& nh,
-                          const std::string& key,
-                            const std::vector< std::vector<T> >& mtx,
-                              unsigned int precision = 0);
+                        const std::string& key,
+                        const std::vector< std::vector<T> >& mtx,
+                        unsigned int precision = 0);
 
 }  // namespace rosparam_utilities
 

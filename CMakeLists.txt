@@ -66,4 +66,5 @@ if(CATKIN_ENABLE_TESTING)
   endif()
 endif()
 
+set(ROSLINT_CPP_OPTS "--filter=-runtime/references,-runtime/int,-whitespace/braces,+whitespace,-readability/function")
 roslint_cpp()

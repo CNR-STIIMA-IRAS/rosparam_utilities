@@ -49,24 +49,24 @@ namespace utils
 /**
  * RESIZE - SAFE FUNCTION CALLED ONLY IF THE MATRIX IS DYNAMICALLY CREATED AT RUNTIME
  */
-template<typename Derived,
-         	typename std::enable_if<
-                            (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic)
-                             || (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic)
-                        , int>::type = 0 >
+template < typename Derived,
+           typename std::enable_if <
+             (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic)
+             || (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic)
+             , int >::type = 0 >
 inline bool resize(Eigen::MatrixBase<Derived> const & m, int rows, int cols)
 {
   Eigen::MatrixBase<Derived>& mat = const_cast< Eigen::MatrixBase<Derived>& >(m);
-  if((Eigen::MatrixBase<Derived>::RowsAtCompileTime ==Eigen::Dynamic)
-  && (Eigen::MatrixBase<Derived>::ColsAtCompileTime ==Eigen::Dynamic))
+  if ((Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic)
+      && (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic))
   {
-    mat.derived().resize(rows,cols);
+    mat.derived().resize(rows, cols);
   }
-  else if(Eigen::MatrixBase<Derived>::RowsAtCompileTime ==Eigen::Dynamic)
+  else if (Eigen::MatrixBase<Derived>::RowsAtCompileTime == Eigen::Dynamic)
   {
-    mat.derived().resize(rows,Eigen::NoChange);
+    mat.derived().resize(rows, Eigen::NoChange);
   }
-  else if(Eigen::MatrixBase<Derived>::ColsAtCompileTime ==Eigen::Dynamic)
+  else if (Eigen::MatrixBase<Derived>::ColsAtCompileTime == Eigen::Dynamic)
   {
     mat.derived().resize(Eigen::NoChange, cols);
   }
@@ -74,19 +74,19 @@ inline bool resize(Eigen::MatrixBase<Derived> const & m, int rows, int cols)
 }
 
 
-template<typename Derived,
-           typename std::enable_if< (Eigen::MatrixBase<Derived>::RowsAtCompileTime != Eigen::Dynamic)
-                        && (Eigen::MatrixBase<Derived>::ColsAtCompileTime != Eigen::Dynamic)
-                        , int>::type = 0 >
+template < typename Derived,
+           typename std::enable_if < (Eigen::MatrixBase<Derived>::RowsAtCompileTime != Eigen::Dynamic)
+                                     && (Eigen::MatrixBase<Derived>::ColsAtCompileTime != Eigen::Dynamic)
+                                     , int >::type = 0 >
 inline bool resize(Eigen::MatrixBase<Derived> const & /*m*/, int rows, int cols)
 {
   return Eigen::MatrixBase<Derived>::RowsAtCompileTime == rows
-      && Eigen::MatrixBase<Derived>::ColsAtCompileTime == cols;
+         && Eigen::MatrixBase<Derived>::ColsAtCompileTime == cols;
 }
 
 inline bool resize(const double& /*m*/, int rows, int cols)
 {
-  return rows==1 && cols ==1;
+  return rows == 1 && cols == 1;
 }
 
 // Using const & and const_cast to modify value ... weird syntax of eigen
@@ -228,7 +228,7 @@ inline bool set(const std::string& key, const T& val, std::string& what)
   try
   {
     toXmlRpcValue(val, config);
-    ros::param::set(key,config);
+    ros::param::set(key, config);
   }
   catch (std::exception& e)
   {
@@ -249,9 +249,9 @@ inline bool getParam(const ros::NodeHandle& nh, const std::string& key, T& ret, 
 
 template<typename T>
 bool setParam(const ros::NodeHandle& nh,
-                const std::string& key,
-                  const T& ret,
-                    std::string& what)
+              const std::string& key,
+              const T& ret,
+              std::string& what)
 {
   std::string key_ = (key.find("/") == 0) ? key : nh.getNamespace() + "/" + key;
   return set(key_, ret, what);
@@ -304,11 +304,11 @@ inline bool setParamNum(ros::NodeHandle& nh,  const std::string& key, const std:
                         unsigned int precision)
 {
   const std::vector<std::type_index> allowed_type =
-    {
-      std::type_index(typeid(double)),
-      std::type_index(typeid(long double)),
-      std::type_index(typeid(float))
-    };
+  {
+    std::type_index(typeid(double)),
+    std::type_index(typeid(long double)),
+    std::type_index(typeid(float))
+  };
   bool ok = false;
 
   for (auto typ : allowed_type)
@@ -403,12 +403,12 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<T>& val
     if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
     {
       T element;
-      fromXmlRpcValue(node,element);
+      fromXmlRpcValue(node, element);
       val.push_back(element);
     }
     else
     {
-      for (int j=0; j<config.size(); ++j)
+      for (int j = 0; j < config.size(); ++j)
       {
         T element;
         fromXmlRpcValue(config[j], element);
@@ -416,23 +416,23 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<T>& val
       }
     }
   }
-  catch(std::exception& e)
+  catch (std::exception& e)
   {
     throw std::runtime_error(("Type inconsistency (expected a vector<>): "
-                                + std::string(e.what())).c_str());
+                              + std::string(e.what())).c_str());
   }
 }
 
 template<typename T>
 void toXmlRpcValue(const std::vector<T>& val, XmlRpc::XmlRpcValue& node)
 {
-  for (auto i=0; i<val.size();++i)
+  for (auto i = 0; i < val.size(); ++i)
   {
     try
     {
       XmlRpc::XmlRpcValue leaf;
       toXmlRpcValue(val.at(i), leaf);
-      node[i]=leaf;
+      node[i] = leaf;
     }
     catch (std::exception& e)
     {
@@ -481,7 +481,7 @@ void toXmlRpcValue(const boost::array<T, n>& val, XmlRpc::XmlRpcValue& node)
   {
     v[i] = val[i];
   }
-  toXmlRpcValue(v,node);
+  toXmlRpcValue(v, node);
 }
 
 template<typename T,  size_t n>
@@ -520,7 +520,7 @@ void toXmlRpcValue(const std::array<T, n>& val, XmlRpc::XmlRpcValue& node)
   {
     v[i] = val[i];
   }
-  toXmlRpcValue(v,node);
+  toXmlRpcValue(v, node);
 }
 
 template<typename T>
@@ -533,7 +533,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<std::ve
     if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
     {
       std::vector<T> element;
-      fromXmlRpcValue(node,element);
+      fromXmlRpcValue(node, element);
       vv.push_back(element);
     }
     else
@@ -546,23 +546,23 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::vector<std::ve
       }
     }
   }
-  catch(std::exception& e)
+  catch (std::exception& e)
   {
     throw std::runtime_error(("Type inconsistency (expected a vector<vector<>>): "
-                                + std::string(e.what())).c_str());
+                              + std::string(e.what())).c_str());
   }
 }
 
 template<typename T>
 void toXmlRpcValue(const std::vector<std::vector<T>>& val, XmlRpc::XmlRpcValue& node)
 {
-  for (auto i=0; i<val.size();++i)
+  for (auto i = 0; i < val.size(); ++i)
   {
     try
     {
       XmlRpc::XmlRpcValue leaf;
       toXmlRpcValue(val.at(i), leaf);
-      node[i]=leaf;
+      node[i] = leaf;
     }
     catch (std::exception& e)
     {
@@ -582,41 +582,42 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<D
 
   int expected_rows = Eigen::MatrixBase<Derived>::RowsAtCompileTime;
   int expected_cols = Eigen::MatrixBase<Derived>::ColsAtCompileTime;
-  bool should_be_a_vector = (expected_rows==1 || expected_cols==1);
+  bool should_be_a_vector = (expected_rows == 1 || expected_cols == 1);
 
   try
   {
     Eigen::MatrixBase<Derived>& _val = const_cast< Eigen::MatrixBase<Derived>& >(val);
 
-    if(should_be_a_vector)
+    if (should_be_a_vector)
     {
       std::vector<double> vv;
-      fromXmlRpcValue(node,vv);
+      fromXmlRpcValue(node, vv);
       int dim = static_cast<int>(vv.size());
-      if(!utils::resize(_val, (expected_rows==1 ? 1 : dim), (expected_rows==1 ? dim : 1)))
+      if (!utils::resize(_val, (expected_rows == 1 ? 1 : dim), (expected_rows == 1 ? dim : 1)))
       {
-          throw std::runtime_error("It was expected a vector (" +
-                                     std::to_string(expected_rows) + "x" + std::to_string(expected_cols) +
-                                      ") while the param store a " + std::to_string(dim) +"-vector");
+        throw std::runtime_error("It was expected a vector (" +
+                                 std::to_string(expected_rows) + "x" + std::to_string(expected_cols) +
+                                 ") while the param store a " + std::to_string(dim) + "-vector");
       }
-      for(int i=0;i<dim;i++)
-          _val(i) = vv.at(static_cast<size_t>(i));
+      for (int i = 0; i < dim; i++)
+        _val(i) = vv.at(static_cast<size_t>(i));
     }
-    else // matrix expected
+    else  // matrix expected
     {
       std::vector<std::vector<double>> vv;
-      fromXmlRpcValue(node,vv);
+      fromXmlRpcValue(node, vv);
       int rows = vv.size();
       int cols = vv.front().size();
-      if(!utils::resize(_val,rows,cols))
+      if (!utils::resize(_val, rows, cols))
       {
-          throw std::runtime_error("It was expected a vector (" +
-                                     std::to_string(expected_rows) + "x" + std::to_string(expected_cols) +
-                                      ") while the param store a (" + std::to_string(rows)+"x"+ std::to_string(cols)+ +") matrix");
+        throw std::runtime_error("It was expected a vector (" +
+                                 std::to_string(expected_rows) + "x" + std::to_string(expected_cols) +
+                                 ") while the param store a ("
+                                 + std::to_string(rows) + "x" + std::to_string(cols) + +") matrix");
       }
-      for(int i=0;i<rows;i++)
-        for(int j=0;j<cols;j++)
-          _val(i,j) = vv.at(static_cast<int>(i)).at(static_cast<int>(j));
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+          _val(i, j) = vv.at(static_cast<int>(i)).at(static_cast<int>(j));
     }
   }
   catch (std::exception& e)
@@ -632,26 +633,26 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<D
 template<typename Derived>
 void toXmlRpcValue(const Eigen::MatrixBase<Derived>& val, XmlRpc::XmlRpcValue& node)
 {
-  if(val.cols()==1)
+  if (val.cols() == 1)
   {
     std::vector<double> v(val.rows());
-    for(size_t i=0;i<v.size();++i)
+    for (size_t i = 0; i < v.size(); ++i)
     {
       v.at(i) = val(i);
     }
-    toXmlRpcValue(v,node);
+    toXmlRpcValue(v, node);
   }
   else
   {
-    std::vector<std::vector<double>> mtx(val.rows(),std::vector<double>(val.cols()));
-    for(int i=0;i<val.rows();++i)
+    std::vector<std::vector<double>> mtx(val.rows(), std::vector<double>(val.cols()));
+    for (int i = 0; i < val.rows(); ++i)
     {
-      for(int j=0;j<val.cols();++j)
+      for (int j = 0; j < val.cols(); ++j)
       {
-        mtx.at(i).at(j)=val(i,j);
+        mtx.at(i).at(j) = val(i, j);
       }
     }
-    toXmlRpcValue(mtx,node);
+    toXmlRpcValue(mtx, node);
   }
 }
 
@@ -662,7 +663,7 @@ inline bool getParamVector(const XmlRpc::XmlRpcValue& node,  std::vector<T>& ret
   if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
   {
     ROS_ERROR("The node '%s' is not of type array. %d/%d", log_key.c_str(), static_cast<int>(config.getType()),
-                static_cast<int>(XmlRpc::XmlRpcValue::TypeArray));
+              static_cast<int>(XmlRpc::XmlRpcValue::TypeArray));
     return false;
   }
 
@@ -756,14 +757,14 @@ inline bool getParamArray(const XmlRpc::XmlRpcValue& node,  const std::string& k
 
 template<class T>
 inline bool getParamMatrix(const XmlRpc::XmlRpcValue& node,
-                            std::vector<std::vector<T>>& ret,
-                              const std::string& log_key)
+                           std::vector<std::vector<T>>& ret,
+                           const std::string& log_key)
 {
   XmlRpc::XmlRpcValue config(node);
   if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
   {
     ROS_ERROR("The node '%s' is not of type array. %d/%d",
-                log_key.c_str(), static_cast<int>(config.getType()),  static_cast<int>(XmlRpc::XmlRpcValue::TypeArray));
+              log_key.c_str(), static_cast<int>(config.getType()),  static_cast<int>(XmlRpc::XmlRpcValue::TypeArray));
     return false;
   }
 
@@ -857,8 +858,8 @@ inline void extractParam(const ros::NodeHandle& nh, const std::string& key, T& r
 
 template<>
 inline void extractParam<XmlRpc::XmlRpcValue>(const ros::NodeHandle& nh,
-                                                const std::string& key,
-                                                  XmlRpc::XmlRpcValue& ret)
+    const std::string& key,
+    XmlRpc::XmlRpcValue& ret)
 {
   if (!nh.getParam(key, ret))
   {

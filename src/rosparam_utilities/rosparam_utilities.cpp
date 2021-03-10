@@ -11,14 +11,14 @@ namespace rosparam_utilities
 XmlRpc::XmlRpcValue get(const ros::NodeHandle& nh)
 {
   XmlRpc::XmlRpcValue node;
-  ros::param::get(nh.getNamespace(),node);
+  ros::param::get(nh.getNamespace(), node);
   return node;
 }
 
 XmlRpc::XmlRpcValue get(const std::string& key)
 {
   XmlRpc::XmlRpcValue node;
-  if(ros::param::get(key,node))
+  if (ros::param::get(key, node))
     return node;
   return XmlRpc::XmlRpcValue();
 }

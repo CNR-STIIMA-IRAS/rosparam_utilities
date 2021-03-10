@@ -6,3 +6,4 @@ kdev4/
 .vscode
 *.vscode
 *.swp
+*.orig
