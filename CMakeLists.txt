@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(catkin REQUIRED COMPONENTS roscpp )
+find_package(catkin REQUIRED COMPONENTS roscpp roslint)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 catkin_package(
@@ -66,3 +66,5 @@ if(CATKIN_ENABLE_TESTING)
   endif()
 endif()
 
+set(ROSLINT_CPP_OPTS "--filter=-runtime/references,-runtime/int,-whitespace/braces,+whitespace,-readability/function")
+roslint_cpp()
