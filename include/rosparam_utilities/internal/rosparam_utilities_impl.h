@@ -37,6 +37,8 @@
 #ifndef ROSPARAM_UTILITIES_INTERNAL_ROSPARAM_UTILITIES_IMPL_H
 #define ROSPARAM_UTILITIES_INTERNAL_ROSPARAM_UTILITIES_IMPL_H
 
+#include <typeinfo>       // operator typeid
+#include <typeindex>
 #include <string>
 #include <vector>
 #include <type_traits>
