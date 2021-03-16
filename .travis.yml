@@ -1,6 +1,6 @@
 os: linux
 language: generic
-dist: focal
+dist: xenial
 
 branches:
   only:
@@ -13,7 +13,7 @@ jobs:
         - docker
       env:
         #- CODECOV_TOKEN="cf4de94c-ce6b-4c5d-ba48-d10b28a172b8"
-        - ROS_DISTRO="noetic"
+        - ROS_DISTRO="kinetic"
         # Temporary dependency on code_coverage that isn't released
         - UPSTREAM_WORKSPACE=".upstream.repos"
         # Need curl for upload to codecov
