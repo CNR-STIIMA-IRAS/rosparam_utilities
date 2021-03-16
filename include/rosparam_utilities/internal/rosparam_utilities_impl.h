@@ -677,7 +677,8 @@ inline bool getParamVector(const XmlRpc::XmlRpcValue& node,  std::vector<T>& ret
       T val;
       if (typeid(T) == typeid(double))
       {
-        val = toDouble(config[j]);
+        fromXmlRpcValue(config[j],val);
+        //val = toDouble(config[j]);
       }
       else if (typeid(T) == typeid(std::string))
       {
@@ -788,7 +789,8 @@ inline bool getParamMatrix(const XmlRpc::XmlRpcValue& node,
         XmlRpc::XmlRpcValue rpcval = row[j];
         if (typeid(T) == typeid(double))
         {
-          value = toDouble(row[j]);
+          fromXmlRpcValue(row[j],value);
+          //value = toDouble(row[j]);
         }
         else if (typeid(T) == typeid(std::string))
         {

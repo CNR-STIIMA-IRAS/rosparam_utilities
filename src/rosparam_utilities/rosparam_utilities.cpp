@@ -294,7 +294,7 @@ void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, std::string& val)
   }
 }
 
-
+#if ROS_VERSION_MINIMUM(1, 14, 1)
 double toDouble(const XmlRpc::XmlRpcValue& node, const std::string& field, const std::string& log)
 {
   return fromXmlRpcValue<double>(node, field, log);
@@ -311,6 +311,7 @@ std::string toString(const XmlRpc::XmlRpcValue& node, const std::string& field, 
 {
   return fromXmlRpcValue<std::string>(node, field, log);
 }
+#endif
 
 void toXmlRpcValue(const int& t,  XmlRpc::XmlRpcValue& xml_value, const std::string& format)
 {

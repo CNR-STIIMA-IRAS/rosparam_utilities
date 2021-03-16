@@ -234,6 +234,7 @@ void toXmlRpcValue(const boost::array<T, n>& val, XmlRpc::XmlRpcValue& node);
 template<typename T>
 T fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, const std::string& key = "", const std::string& log = "");
 
+#if ROS_VERSION_MINIMUM(1, 14, 1)
 //! "Specialization" of template<typename T> T fromXmlRpcValue(...) for double
 double toDouble(const XmlRpc::XmlRpcValue& node, const std::string& key = "", const std::string& log = "");
 
@@ -245,6 +246,7 @@ bool toBool(const XmlRpc::XmlRpcValue& node, const std::string& key = "", const 
 
 //! "Specialization" of template<typename T> T fromXmlRpcValue(...) for string
 std::string toString(const XmlRpc::XmlRpcValue& node, const std::string& key = "", const std::string& log = "");
+#endif
 //======================================================================================================================
 
 
