@@ -23,6 +23,12 @@ XmlRpc::XmlRpcValue get(const std::string& key)
   return XmlRpc::XmlRpcValue();
 }
 
+void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, XmlRpc::XmlRpcValue& val)
+{
+  XmlRpc::XmlRpcValue config(node);
+  val = config;
+}
+
 void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, uint32_t& val)
 {
   XmlRpc::XmlRpcValue config(node);

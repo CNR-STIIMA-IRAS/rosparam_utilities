@@ -60,7 +60,15 @@ XmlRpc::XmlRpcValue get(const ros::NodeHandle& nh);
 XmlRpc::XmlRpcValue get(const std::string& key);
 
 //======================================================================================================================
-//=== MAIN FUNCTIONS ===================================================================================================
+//=== MAIN FUNCTIONS ===================================================================================================/**
+/* @brief check if the param exist
+ *
+ * @param[in] key to find (full path)
+ * @param[out] what: a message with the error (return false) or a warning (return true)
+ * @return true if ok, or if default value has been superimposed, false otherwise.
+ */
+bool has(const std::string& key, std::string& what);
+
 /**
  * @brief get the param, and return true if found and ok. Store the error(s) in 'what'. If a default value is present,
  * it superimposes the defaul values, and it return true, but it stores a warning in 'what'. Typical error is the
@@ -149,6 +157,10 @@ bool getParam(const XmlRpc::XmlRpcValue& node, T& ret, const std::string& log_ke
 //======================================================================================================================
 //== EXCEPTION IF FAIL ===== OUTPUT PASSED AS ARGUMENT WITH REFERENCE
 //======================================================================================================================
+// =============================================================================================
+//! Overload XmlRpc::XmlRpcValue (GET)
+void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, XmlRpc::XmlRpcValue& val);
+
 //! Overload DOUBLE (GET)
 void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, double& val);
 
@@ -314,5 +326,6 @@ inline bool setParamNum(ros::NodeHandle& nh,
 }  // namespace rosparam_utilities
 
 #include <rosparam_utilities/internal/rosparam_utilities_impl.h>
+#include <rosparam_utilities/internal/rosparam_utilities_deprecated_impl.h>
 
 #endif  // ROSPARAM_UTILITIES_ROSPARAM_UTILITIES_H
