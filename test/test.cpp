@@ -427,6 +427,179 @@ TEST(TestSuite, paramEigenVectors2dMatrixXd)
 }
 
 
+// Declare a test
+TEST(TestSuite, getMethods)
+{
+  ros::NodeHandle nh("/ns_exist/struct");
+
+  int int_i = 0;
+  int int_i2 = 0;
+  double double_d = 0.0;
+  double double_d2 = 0.0;
+  std::string string_s;
+  std::vector<std::string> vector_string;
+  std::vector<int> vector_int;
+  std::vector<double> vector_double;
+  std::vector<std::vector<int>> matrix_int;
+  std::vector<std::vector<double>> matrix_double;
+  std::vector<std::vector<std::string>> matrix_string;
+
+  Eigen::VectorXd vectorxd;
+  Eigen::Matrix<double, 10, 1> vector10;
+  vector10.setZero();
+  Eigen::Matrix<double, 4, 1> vector4;
+  vector4.setZero();
+
+  Eigen::MatrixXd matrixxd;
+  Eigen::Matrix<double, 10, 10> matrix1010;
+  matrix1010.setZero();
+  Eigen::Matrix<double, 2, 2>   matrix22;
+  matrix22.setZero();
+
+  std::string what;
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/int_i", int_i, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/int_i2", int_i2, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/double_d", double_d, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/double_d2", double_d2, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/string_s", string_s, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_string", vector_string, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_int", vector_int, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_double", vector_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/matrix_int", matrix_int, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/matrix_double", matrix_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/matrix_string", matrix_string, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_double", vectorxd, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_double", vector4, what));
+
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/vector_double", vector10, what));
+  COUT << ":vector100:" << vector10.transpose() << " what:" << what  << std::endl;
+
+  Eigen::Matrix<double, 4, 1> vector4def;
+  vector4def.setConstant(2.0);
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_double__", vector4, what, &vector4def));
+
+  Eigen::Matrix < double, -1, 1 > vectorxdef;
+  vectorxdef.resize(7);
+  vectorxdef.setConstant(3.0);
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_double__", vectorxd, what, &vectorxdef));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/matrix_double", matrixxd, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/matrix_double", matrix22, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/matrix_double", matrix1010, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/matrix_double", vectorxd, what));
+}
+
+// Declare a test
+TEST(TestSuite, paramVectors1dVectorGET)
+{
+  ros::NodeHandle nh("/test_vectors_1d");
+
+  std::vector<double> vector_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/A", vector_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/B", vector_double, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/C", vector_double, what));
+  COUT << ":vectors:" << " what:" << what << std::endl;
+}
+
+
+TEST(TestSuite, paramVectors1dMatrixGET)
+{
+  ros::NodeHandle nh("/test_vectors_1d");
+
+  std::vector<std::vector<double>> matrix_double;
+
+  std::string what;
+
+//=====================
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/A", matrix_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/B", matrix_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/C", matrix_double, what));
+}
+
+
+// Declare a test
+TEST(TestSuite, paramEigenVectors1dVectorXdGET)
+{
+  ros::NodeHandle nh("/test_vectors_1d");
+
+  Eigen::VectorXd vector_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/A", vector_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/B", vector_double, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/C", vector_double, what));
+  COUT << ":vectors:" << (vector_double) << (what.size() > 0 ? " what: " + what : "")  << std::endl;
+}
+
+// Declare a test
+TEST(TestSuite, paramEigenVectors1dMatrixXdGET)
+{
+  ros::NodeHandle nh("/test_vectors_1d");
+
+  Eigen::MatrixXd matrix_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/A", matrix_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/B", matrix_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/C", matrix_double, what));
+  COUT << ":vectors:" << (matrix_double) << (what.size() > 0 ? " what: " + what : "")  << std::endl;
+}
+// Declare a test
+TEST(TestSuite, paramVectors2dVectorGET)
+{
+  ros::NodeHandle nh("/test_vectors_2d");
+
+  std::vector<double> vector_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/A", vector_double, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/B", vector_double, what));
+  COUT << ":vectors:" << (what.size() > 0 ? " what: " + what : "")  << std::endl;
+}
+
+
+TEST(TestSuite, paramVectors2dMatrixGET)
+{
+  ros::NodeHandle nh("/test_vectors_2d");
+
+  std::vector<std::vector<double>> matrix_double;
+
+  std::string what;
+
+//=====================
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/A", matrix_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/B", matrix_double, what));
+}
+
+
+// Declare a test
+TEST(TestSuite, paramEigenVectors2dVectorXdGET)
+{
+  ros::NodeHandle nh("/test_vectors_2d");
+
+  Eigen::VectorXd vector_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/A", vector_double, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/B", vector_double, what));
+  COUT << ":vectors:" << (what.size() > 0 ? " what: " + what : "")  << std::endl;
+}
+
+// Declare a test
+TEST(TestSuite, paramEigenVectors2dMatrixXdGET)
+{
+  ros::NodeHandle nh("/test_vectors_2d");
+
+  Eigen::MatrixXd matrix_double;
+
+  std::string what;
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/A", matrix_double, what));
+  EXPECT_TRUE(ru::get(nh.getNamespace()+"/B", matrix_double, what));
+}
+
+
+
 
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
