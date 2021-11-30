@@ -39,8 +39,7 @@
 #include <string>
 #include <boost/array.hpp>
 #include <bitset>
-#include <typeinfo>
-#include <typeindex>
+
 #include <Eigen/Core>
 
 #include <ros/ros.h>
