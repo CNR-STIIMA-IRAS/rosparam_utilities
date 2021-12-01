@@ -22,7 +22,6 @@ jobs:
         env:
           - {ROS_DISTRO: noetic, ROS_REPO: testing}
           - {ROS_DISTRO: noetic, ROS_REPO: main}
-          - {ENABLE_COVERAGE_TESTING: ON}
     env:
       CCACHE_DIR: /github/home/.ccache # Directory for ccache (and how we enable ccache in industrial_ci)
       CODE_COVERAGE: codecov.io
@@ -48,6 +47,6 @@ jobs:
           directory: ./coverage/reports/
           #flags: unittests # optional
           #name: codecov-umbrella # optional
-          fail_ci_if_error: true # optional (default = false)
+          fail_ci_if_error: false # optional (default = false)
           path_to_write_report: ./coverage/codecov_report.txt
           verbose: true # optional (default = false)
