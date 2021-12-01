@@ -168,8 +168,8 @@ std::string toString(const XmlRpc::XmlRpcValue& node, const std::string& key = "
 ## License ##
 [![FOSSA Status][o]][5]
 
-[t]:https://travis-ci.org/CNR-STIIMA-IRAS/rosparam_utilities.svg?branch=master
-[1]:https://travis-ci.org/CNR-STIIMA-IRAS/rosparam_utilities
+[t]:https://github.com/CNR-STIIMA-IRAS/rosparam_utilities/actions/workflows/industrial_ci_action.yml/badge.svg
+[1]:https://github.com/CNR-STIIMA-IRAS/rosparam_utilities/actions/workflows/industrial_ci_action.yml
 
 [c]:https://codecov.io/gh/CNR-STIIMA-IRAS/rosparam_utilities/branch/master/graph/badge.svg?token=VELYXJ2FUJ
 [2]:https://codecov.io/gh/CNR-STIIMA-IRAS/rosparam_utilities
