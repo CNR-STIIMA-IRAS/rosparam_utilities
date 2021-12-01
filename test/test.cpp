@@ -50,6 +50,11 @@ namespace ru = rosparam_utilities;
 
 #define COUT std::cout << __LINE__
 
+bool bool_val=false;
+uint32_t uint_i = 0;
+uint32_t uint_i2 = 0;
+uint64_t uint64_i = 0;
+uint64_t uint64_i2 = 0;
 int int_i = 0;
 int int_i2 = 0;
 double double_d = 0.0;
@@ -136,13 +141,23 @@ TEST(TestSuite, rawMethods)
   matrix1010.setZero();
   matrix22.setZero();
 
-  XmlRpc::XmlRpcValue node;
+  XmlRpc::XmlRpcValue node,tmp;
+  EXPECT_NO_FATAL_FAILURE(node=ru::get(nh));
+  EXPECT_NO_FATAL_FAILURE(node=ru::get(nh.getNamespace()));
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node,tmp));
   EXPECT_TRUE(nh.getParam("struct", node));
 
   EXPECT_TRUE(ru::check(node, required_fields));
 
+
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i"         ], int_i));
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i2"        ], int_i2));
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i"         ], uint_i));
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i2"        ], uint_i2));
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i"         ], uint64_i));
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i2"        ], uint64_i2));
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i"         ], bool_val));
+  EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["int_i2"        ], bool_val));
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["double_d"      ], double_d));
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["double_d2"     ], double_d2));
   EXPECT_NO_FATAL_FAILURE(ru::fromXmlRpcValue(node["string_s"      ], string_s));
@@ -180,6 +195,29 @@ TEST(TestSuite, rawMethods)
 
   EXPECT_TRUE(equal(d_matrixxd, matrixxd));
   EXPECT_TRUE(equal(d_matrix22, matrix22));
+
+  #if ROS_VERSION_MINIMUM(1, 14, 1)
+    std::string log;
+    EXPECT_ANY_THROW( double_d = ru::toDouble(node,"double_d", log));
+    EXPECT_ANY_THROW( double_d = ru::toDouble(node,"int_i", log));
+    EXPECT_ANY_THROW( double_d = ru::toDouble(node,"bool_val", log));
+    EXPECT_ANY_THROW( double_d = ru::toDouble(node,"string_n", log));
+
+    EXPECT_ANY_THROW( int_i  = ru::toInt(node,"double_d", log));
+    EXPECT_ANY_THROW( int_i  = ru::toInt(node,"int_i", log));
+    EXPECT_ANY_THROW( int_i  = ru::toInt(node,"bool_val", log));
+    EXPECT_ANY_THROW( int_i  = ru::toInt(node,"string_n", log));
+
+    EXPECT_ANY_THROW( bool_val = ru::toBool(node,"double_d", log));
+    EXPECT_ANY_THROW( bool_val = ru::toBool(node,"int_i", log));
+    EXPECT_ANY_THROW( bool_val = ru::toBool(node,"bool_val", log));
+    EXPECT_ANY_THROW( bool_val = ru::toBool(node,"string_n", log));
+     
+    EXPECT_ANY_THROW( string_s = ru::toString(node,"double_d", log));
+    EXPECT_ANY_THROW( string_s = ru::toString(node,"int_i", log));
+    EXPECT_ANY_THROW( string_s = ru::toString(node,"bool_val", log));
+    EXPECT_ANY_THROW( string_s = ru::toString(node,"string_n", log));
+  #endif
 }
 
 // Declare a test
@@ -230,6 +268,10 @@ TEST(TestSuite, rawSetMethods)
 
   EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(int_i, node["int_i"]));
   EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(int_i2, node["int_i2"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(uint_i, node["uint_i"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(uint_i2, node["uint_i2"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(uint64_i, node["uint64_i"]));
+  EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(uint64_i2, node["uint64_i2"]));
   EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(double_d, node["double_d"]));
   EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(double_d2, node["double_d2"]));
   EXPECT_NO_FATAL_FAILURE(ru::toXmlRpcValue(string_s, node["string_s"]));
@@ -470,6 +512,20 @@ TEST(TestSuite, getMethods)
   EXPECT_TRUE(ru::get(nh.getNamespace()+"/matrix_string", matrix_string, what));
   EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_double", vectorxd, what));
   EXPECT_TRUE(ru::get(nh.getNamespace()+"/vector_double", vector4, what));
+
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___int_i", int_i, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___int_i2", int_i2, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___double_d", double_d, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___double_d2", double_d2, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___string_s", string_s, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___vector_string", vector_string, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___vector_int", vector_int, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___vector_double", vector_double, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___matrix_int", matrix_int, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___matrix_double", matrix_double, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___matrix_string", matrix_string, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___vector_double", vectorxd, what));
+  EXPECT_FALSE(ru::get(nh.getNamespace()+"/___vector_double", vector4, what));
 
   EXPECT_FALSE(ru::get(nh.getNamespace()+"/vector_double", vector10, what));
   COUT << ":vector100:" << vector10.transpose() << " what:" << what  << std::endl;

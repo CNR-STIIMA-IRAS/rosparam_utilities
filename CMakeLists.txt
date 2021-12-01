@@ -21,6 +21,8 @@ catkin_package(
   DEPENDS
 )
 
+message(WARNING, "CATKIN_ENABLE_TESTING: ${CATKIN_ENABLE_TESTING}, ENABLE_COVERAGE_TESTING:${ENABLE_COVERAGE_TESTING}")
+
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
   find_package(code_coverage REQUIRED)
   # Add compiler flags for coverage instrumentation before defining any targets

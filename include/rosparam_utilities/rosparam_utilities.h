@@ -176,13 +176,13 @@ void toXmlRpcValue(const int& t, XmlRpc::XmlRpcValue& xml_value, const std::stri
 void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, uint32_t& val);
 
 //! Overload UNSIGNED INT (SET)
-void toXmlRpcValue(uint32_t& val, const XmlRpc::XmlRpcValue& node);
+void toXmlRpcValue(const uint32_t& val, XmlRpc::XmlRpcValue& node);
 
 //! Overload LONG UNSIGNED INT (GET)
 void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, uint64_t& val);
 
 //! Overload UNSIGNED INT (SET)
-void toXmlRpcValue(uint64_t& val, const XmlRpc::XmlRpcValue& node);
+void toXmlRpcValue(const uint64_t& val, XmlRpc::XmlRpcValue& node);
 
 //! Overload BOOL (GET)
 void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, bool& val);

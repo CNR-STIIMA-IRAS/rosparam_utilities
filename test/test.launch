@@ -11,6 +11,7 @@
     double_d: 2.0
     double_d2: 2
     string_s: ciao
+    string_n: 1.0
     vector_string: [ ciao, ciao, ciao]
     vector_int: [1, 2, 3, 4.4444]
     vector_double: [1.01, 2.002, 3.0003, 4.00004]
@@ -32,6 +33,7 @@
   double_d: 2.0
   double_d2: 2
   string_s: ciao
+  string_n: 1.0
   vector_string: [ ciao, ciao, ciao]
   vector_int: [1, 0.0, 1, 0.0234]
   vector_double: [1.0, 1, 2, 3.4]
