@@ -38,6 +38,8 @@ jobs:
       # Run industrial_ci
       - uses: 'ros-industrial/industrial_ci@master'
         env: ${{ matrix.env }}
+        with:
+          verbose: true # optional (default = false)
       - uses: actions/checkout@master
       - uses: codecov/codecov-action@v1
         with:
@@ -48,4 +50,4 @@ jobs:
           #name: codecov-umbrella # optional
           fail_ci_if_error: false # optional (default = false)
           path_to_write_report: ./coverage/codecov_report.txt
-          verbose: true # optional (default = false)
+          verbose: false # optional (default = false)
