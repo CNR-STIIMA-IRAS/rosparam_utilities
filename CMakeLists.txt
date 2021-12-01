@@ -20,12 +20,7 @@ catkin_package(
   CATKIN_DEPENDS roscpp
   DEPENDS
 )
-
-message(WARNING, "CATKIN_ENABLE_TESTING: ${CATKIN_ENABLE_TESTING}, ENABLE_COVERAGE_TESTING:${ENABLE_COVERAGE_TESTING}, $ENV{ENABLE_COVERAGE_TESTING}")
-
-if(CATKIN_ENABLE_TESTING AND 
-    (ENABLE_COVERAGE_TESTING OR (DEFINED ENV{ENABLE_COVERAGE_TESTING} AND "$ENV{ENABLE_COVERAGE_TESTING}") )
-)
+if(CATKIN_ENABLE_TESTING)
   find_package(code_coverage REQUIRED)
   # Add compiler flags for coverage instrumentation before defining any targets
   APPEND_COVERAGE_COMPILER_FLAGS()
@@ -61,13 +56,11 @@ if(CATKIN_ENABLE_TESTING)
   add_rostest_gtest(${PROJECT_NAME}_test test/test.launch test/test.cpp)
   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} )
 
-  if(ENABLE_COVERAGE_TESTING OR (DEFINED ENV{ENABLE_COVERAGE_TESTING} AND "$ENV{ENABLE_COVERAGE_TESTING}")) 
-    set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
-    add_code_coverage(
+  set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+  add_code_coverage(
       NAME ${PROJECT_NAME}_coverage_report
       DEPENDENCIES ${PROJECT_NAME}_test
-    )
-  endif()
+  )
 endif()
 
 set(ROSLINT_CPP_OPTS "--filter=-runtime/references,-runtime/int,-whitespace/braces,+whitespace,-readability/function")

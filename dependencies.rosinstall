@@ -1,0 +1,3 @@
+- git:
+    local-name: code_coverage
+    uri: https://github.com/mikeferguson/code_coverage.git
