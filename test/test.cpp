@@ -198,25 +198,25 @@ TEST(TestSuite, rawMethods)
 
   #if ROS_VERSION_MINIMUM(1, 14, 1)
     std::string log;
-    EXPECT_ANY_THROW( double_d = ru::toDouble(node,"double_d", log));
-    EXPECT_ANY_THROW( double_d = ru::toDouble(node,"int_i", log));
-    EXPECT_ANY_THROW( double_d = ru::toDouble(node,"bool_val", log));
-    EXPECT_ANY_THROW( double_d = ru::toDouble(node,"string_n", log));
+    EXPECT_NO_FATAL_FAILURE( double_d = ru::toDouble(node,"double_d", log));
+    EXPECT_NO_FATAL_FAILURE( double_d = ru::toDouble(node,"int_i", log));
+    EXPECT_NO_FATAL_FAILURE( double_d = ru::toDouble(node,"bool_val", log));
+    EXPECT_NO_FATAL_FAILURE( double_d = ru::toDouble(node,"string_n", log));
 
-    EXPECT_ANY_THROW( int_i  = ru::toInt(node,"double_d", log));
-    EXPECT_ANY_THROW( int_i  = ru::toInt(node,"int_i", log));
-    EXPECT_ANY_THROW( int_i  = ru::toInt(node,"bool_val", log));
-    EXPECT_ANY_THROW( int_i  = ru::toInt(node,"string_n", log));
+    EXPECT_NO_FATAL_FAILURE( int_i  = ru::toInt(node,"double_d", log));
+    EXPECT_NO_FATAL_FAILURE( int_i  = ru::toInt(node,"int_i", log));
+    EXPECT_NO_FATAL_FAILURE( int_i  = ru::toInt(node,"bool_val", log));
+    EXPECT_NO_FATAL_FAILURE( int_i  = ru::toInt(node,"string_n", log));
 
-    EXPECT_ANY_THROW( bool_val = ru::toBool(node,"double_d", log));
-    EXPECT_ANY_THROW( bool_val = ru::toBool(node,"int_i", log));
-    EXPECT_ANY_THROW( bool_val = ru::toBool(node,"bool_val", log));
-    EXPECT_ANY_THROW( bool_val = ru::toBool(node,"string_n", log));
+    EXPECT_NO_FATAL_FAILURE( bool_val = ru::toBool(node,"double_d", log));
+    EXPECT_NO_FATAL_FAILURE( bool_val = ru::toBool(node,"int_i", log));
+    EXPECT_NO_FATAL_FAILURE( bool_val = ru::toBool(node,"bool_val", log));
+    EXPECT_NO_FATAL_FAILURE( bool_val = ru::toBool(node,"string_n", log));
      
-    EXPECT_ANY_THROW( string_s = ru::toString(node,"double_d", log));
-    EXPECT_ANY_THROW( string_s = ru::toString(node,"int_i", log));
-    EXPECT_ANY_THROW( string_s = ru::toString(node,"bool_val", log));
-    EXPECT_ANY_THROW( string_s = ru::toString(node,"string_n", log));
+    EXPECT_NO_FATAL_FAILURE( string_s = ru::toString(node,"double_d", log));
+    EXPECT_NO_FATAL_FAILURE( string_s = ru::toString(node,"int_i", log));
+    EXPECT_NO_FATAL_FAILURE( string_s = ru::toString(node,"bool_val", log));
+    EXPECT_NO_FATAL_FAILURE( string_s = ru::toString(node,"string_n", log));
   #endif
 }
 
