@@ -10,10 +10,10 @@ name: CI
 on:
   # When master or melodic-devel branch is pushed to
   push:
-    branches: [ nicola-devel ]
+    branches: [ master ]
   # When there is a pull request against master
   pull_request:
-    branches: [ nicola-devel ]
+    branches: [ master ]
 
 jobs:
   industrial_ci:
