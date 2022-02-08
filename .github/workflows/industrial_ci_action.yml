@@ -36,7 +36,6 @@ jobs:
           key: ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-${{github.run_id}}
           restore-keys: |
             ccache-${{ matrix.ROS_DISTRO }}-${{ matrix.ROS_REPO }}-
-      # Run industrial_ci
       - name: industrial_ci-debug
         if: ${{matrix.build_type == 'Debug'}}
         uses: 'ros-industrial/industrial_ci@master'
