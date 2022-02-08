@@ -19,6 +19,8 @@
   <build_depend>code_coverage</build_depend>
   <build_depend>roslint</build_depend>
 
+  <test_depend>curl</test_depend>
+
   <export>
   </export>
 </package>
