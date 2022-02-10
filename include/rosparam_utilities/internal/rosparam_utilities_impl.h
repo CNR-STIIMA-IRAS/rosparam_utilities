@@ -207,7 +207,7 @@ inline bool get(const std::string& key, T& ret, std::string& what, const T* defa
   XmlRpc::XmlRpcValue config;
   if (!ros::param::get(key, config))
   {
-    what = "Failed in getting thw XmlRpc struct from parameter '" + key + "', weird ..";
+    what = "Failed in getting the XmlRpc struct from parameter '" + key + "', weird ..";
     return false;
   }
   try
@@ -216,7 +216,7 @@ inline bool get(const std::string& key, T& ret, std::string& what, const T* defa
   }
   catch (std::exception& e)
   {
-    what = "Failed in getting thw XmlRpc struct from parameter '" + key + "':\n";
+    what = "Failed in getting the XmlRpc struct from parameter '" + key + "':\n";
     what += e.what();
     return false;
   }
@@ -243,7 +243,7 @@ inline bool set(const std::string& key, const T& val, std::string& what)
   }
   catch (std::exception& e)
   {
-    what = "Failed in getting thw XmlRpc struct from parameter '" + key + "':\n";
+    what = "Failed in getting the XmlRpc struct from parameter '" + key + "':\n";
     what += e.what();
     return false;
   }
