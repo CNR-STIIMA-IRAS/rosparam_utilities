@@ -184,18 +184,23 @@ inline bool has(const std::string& key, std::string& what)
 template<typename T>
 inline bool get(const std::string& key, T& ret, std::string& what, const T* default_val)
 {
+  T* _default_val = default_val ? new T() : nullptr;
+  if(default_val)
+  {
+    *_default_val = *default_val;
+  }
   what = "";
   if (!::rosparam_utilities::has(key, what))
   {
-    if (default_val)
+    if (_default_val)
     {
-      if (!utils::resize(ret, *default_val))
+      if (!utils::resize(ret, *_default_val))
       {
         what += " Mismatch between the default value dimension and the value dimension.";
         return false;
       }
       what += " Default value superimposed";
-      ret = *default_val;
+      ret = *_default_val;
       return true;
     }
     else
