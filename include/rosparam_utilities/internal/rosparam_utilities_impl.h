@@ -556,7 +556,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<D
       std::vector<std::vector<double>> vv;
       fromXmlRpcValue(node, vv);
       int rows = static_cast<int>(vv.size());
-      int cols = vv.front().size();
+      int cols = static_cast<int>(vv.front().size());
       if (!utils::resize(_val, rows, cols))
       {
         throw std::runtime_error("It was expected a vector (" +
