@@ -555,7 +555,7 @@ inline void fromXmlRpcValue(const XmlRpc::XmlRpcValue& node, Eigen::MatrixBase<D
     {
       std::vector<std::vector<double>> vv;
       fromXmlRpcValue(node, vv);
-      int rows = vv.size();
+      int rows = static_cast<int>(vv.size());
       int cols = vv.front().size();
       if (!utils::resize(_val, rows, cols))
       {
